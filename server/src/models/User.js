@@ -7,47 +7,39 @@ const addressSchema = new Schema(
       required: true,
       trim: true,
     },
-
     phone: {
       type: String,
       required: true,
       trim: true,
     },
-
     addressLine1: {
       type: String,
       required: true,
       trim: true,
     },
-
     addressLine2: {
       type: String,
       trim: true,
     },
-
     city: {
       type: String,
       required: true,
       trim: true,
     },
-
     state: {
       type: String,
       required: true,
       trim: true,
     },
-
     pincode: {
       type: String,
       required: true,
       trim: true,
     },
-
     country: {
       type: String,
       default: "India",
     },
-
     isDefault: {
       type: Boolean,
       default: false,
@@ -65,7 +57,6 @@ const userSchema = new Schema(
       minlength: 2,
       maxlength: 50,
     },
-
     email: {
       type: String,
       required: true,
@@ -74,19 +65,16 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
-
     passwordHash: {
       type: String,
       required: true,
       minlength: 8,
       select: false,
     },
-
     phone: {
       type: String,
       trim: true,
     },
-
     role: {
       type: String,
       enum: ["customer", "vendor", "admin"],
@@ -98,12 +86,10 @@ const userSchema = new Schema(
       type: Boolean,
       default: true,
     },
-
     isEmailVerified: {
       type: Boolean,
       default: false,
     },
-
     addresses: [addressSchema],
     lastLoginAt: {
       type: Date,
