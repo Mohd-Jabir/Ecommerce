@@ -1,14 +1,18 @@
 import express, { json } from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from 'cookie-parser'
 import "dotenv/config";
-
+import { connectDB } from "./config/db.js";
+import authRouter from "./routes/auth.routes.js";
 const app = express();
-
+await connectDB();
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(cookieParser());
 
+app.use("/api/v1/auth", authRouter);
 app.use("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -16,8 +20,16 @@ app.use("/api/health", (req, res) => {
   });
 });
 
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    message: err.message || "Internal Server Error",
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on Port ${PORT}`);
 });
