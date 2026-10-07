@@ -134,3 +134,11 @@ export async function refreshAccessToken(refreshToken) {
     },
   };
 }
+export async function getCurrentUser(userData) {
+  return {
+    id: userData._id,
+    name: userData.name,
+    email: userData.email,
+    role: userData.role,
+  };
+}

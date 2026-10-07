@@ -1,7 +1,7 @@
 import express, { json } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import cookieParser from 'cookie-parser'
+import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import authRouter from "./routes/auth.routes.js";
@@ -22,9 +22,13 @@ app.use("/api/health", (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error("GLOBAL ERROR:", err);
+
   const statusCode = err.statusCode || 500;
+
   res.status(statusCode).json({
+    success: err.success ?? false,
     message: err.message || "Internal Server Error",
+    ...(err.errors && { errors: err.errors }),
   });
 });
 
