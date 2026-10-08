@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import crypto from 'crypto'
+import crypto from "crypto";
 export function generateAccessToken(user) {
   return jwt.sign(
     {
@@ -34,4 +34,46 @@ export function verifyRefreshToken(refreshToken) {
 export function getTokenExpiry(refreshToken) {
   const decoded = jwt.decode(refreshToken);
   return new Date(decoded.exp * 1000);
+}
+
+export function generateEmailVerificationToken(user) {
+  return jwt.sign(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      purpose: "email-verification",
+    },
+    process.env.EMAIL_VERIFICATION_SECRET,
+    {
+      expiresIn: "15m",
+    },
+  );
+}
+
+export function verifyEmailVerificationToken(token) {
+  return jwt.verify(token, process.env.EMAIL_VERIFICATION_SECRET);
+}
+
+export function generatePasswordResetToken(user) {
+  return jwt.sign(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      purpose: "password-reset",
+    },
+
+    process.env.PASSWORD_RESET_SECRET,
+
+    {
+      expiresIn: "15m",
+    },
+  );
+}
+
+
+export function verifyPasswordResetToken(token) {
+  return jwt.verify(
+    token,
+    process.env.PASSWORD_RESET_SECRET,
+  );
 }

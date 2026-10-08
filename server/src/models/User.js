@@ -7,25 +7,30 @@ const addressSchema = new Schema(
       required: true,
       trim: true,
     },
+
     phone: {
       type: String,
       required: true,
       trim: true,
     },
+
     addressLine1: {
       type: String,
       required: true,
       trim: true,
     },
+
     addressLine2: {
       type: String,
       trim: true,
     },
+
     city: {
       type: String,
       required: true,
       trim: true,
     },
+
     state: {
       type: String,
       required: true,
@@ -39,13 +44,16 @@ const addressSchema = new Schema(
     country: {
       type: String,
       default: "India",
+      trim: true,
     },
     isDefault: {
       type: Boolean,
       default: false,
     },
   },
-  { _id: true },
+  {
+    _id: true,
+  },
 );
 
 const userSchema = new Schema(
@@ -57,6 +65,7 @@ const userSchema = new Schema(
       minlength: 2,
       maxlength: 50,
     },
+
     email: {
       type: String,
       required: true,
@@ -65,15 +74,21 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+
+    phone: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     passwordHash: {
       type: String,
       required: true,
       minlength: 8,
       select: false,
     },
-    phone: {
-      type: String,
-      trim: true,
+    passwordChangedAt: {
+      type: Date,
+      default: null,
     },
     role: {
       type: String,
@@ -86,6 +101,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: true,
     },
+
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -96,27 +112,43 @@ const userSchema = new Schema(
       default: null,
     },
   },
+
   {
     timestamps: true,
   },
 );
-//instance method
+
 userSchema.methods.comparePassword = function (password) {
   const pepper = process.env.PEPPER;
+
   return bcrypt.compare(password + pepper, this.passwordHash);
 };
 
-//static method
-userSchema.statics.isEmailTaken = async function (email) {
-  return !!(await this.findOne({ email: email }));
+userSchema.methods.canLogin = function () {
+  return this.isActive;
 };
+
+userSchema.statics.isEmailTaken = async function (email) {
+  return !!(await this.findOne({ email }));
+};
+
 userSchema.statics.findByEmail = function (email) {
   return this.findOne({ email }).select("+passwordHash");
 };
-//middelware(pre hooks)
+
+userSchema.methods.isPasswordResetTokenValid = function (issuedAt) {
+  if (!this.passwordChangedAt) {
+    return true;
+  }
+  return issuedAt > Math.floor(this.passwordChangedAt.getTime() / 1000);
+};
 userSchema.pre("save", async function () {
-  if (!this.isModified("passwordHash")) return;
+  if (!this.isModified("passwordHash")) {
+    return;
+  }
   const pepper = process.env.PEPPER;
   this.passwordHash = await bcrypt.hash(this.passwordHash + pepper, 12);
+  this.passwordChangedAt = new Date();
 });
+
 export const User = model("User", userSchema);
