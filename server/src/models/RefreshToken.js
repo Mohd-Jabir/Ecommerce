@@ -40,9 +40,22 @@ refreshTokenSchema.statics.findValidToken = function (tokenHash) {
   });
 };
 
-refreshTokenSchema.methods.revoke = function () {
-  this.revokedAt = new Date();
-  return this.save();
+refreshTokenSchema.statics.revokeValidToken = function (tokenHash) {
+  return this.findOneAndUpdate(
+    {
+      tokenHash,
+      revokedAt: null,
+      expiresAt: { $gt: new Date() },
+    },
+    {
+      $set: {
+        revokedAt: new Date(),
+      },
+    },
+    {
+      returnDocument: "before",
+    },
+  );
 };
 
 export const RefreshToken = model("RefreshToken", refreshTokenSchema);

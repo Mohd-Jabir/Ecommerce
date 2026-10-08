@@ -11,10 +11,13 @@ import {
   generateEmailVerificationToken,
   verifyEmailVerificationToken,
   generatePasswordResetToken,
-  verifyPasswordResetToken
+  verifyPasswordResetToken,
 } from "../utils/auth.utils.js";
 
-import { sendVerificationEmail,sendPasswordResetEmail } from "./email.service.js";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "./email.service.js";
 
 export async function register(userData) {
   const { name, email, password } = userData;
@@ -43,8 +46,7 @@ export async function register(userData) {
   }
 
   try {
-    const verificationToken =
-      generateEmailVerificationToken(user);
+    const verificationToken = generateEmailVerificationToken(user);
 
     await sendVerificationEmail({
       email: user.email,
@@ -54,10 +56,7 @@ export async function register(userData) {
   } catch (error) {
     await User.findByIdAndDelete(user._id);
 
-    console.error(
-      "Verification email failed:",
-      error,
-    );
+    console.error("Verification email failed:", error);
 
     throw new ApiError(
       500,
@@ -73,10 +72,7 @@ export async function register(userData) {
 }
 export async function verifyEmail(token) {
   if (!token) {
-    throw new ApiError(
-      400,
-      "Verification token is required.",
-    );
+    throw new ApiError(400, "Verification token is required.");
   }
 
   let decoded;
@@ -84,33 +80,21 @@ export async function verifyEmail(token) {
   try {
     decoded = verifyEmailVerificationToken(token);
   } catch (error) {
-    throw new ApiError(
-      400,
-      "Invalid or expired verification link.",
-    );
+    throw new ApiError(400, "Invalid or expired verification link.");
   }
 
   if (decoded.purpose !== "email-verification") {
-    throw new ApiError(
-      400,
-      "Invalid verification token.",
-    );
+    throw new ApiError(400, "Invalid verification token.");
   }
 
   const user = await User.findById(decoded.userId);
 
   if (!user) {
-    throw new ApiError(
-      404,
-      "User not found.",
-    );
+    throw new ApiError(404, "User not found.");
   }
 
   if (user.email !== decoded.email) {
-    throw new ApiError(
-      400,
-      "Invalid verification token.",
-    );
+    throw new ApiError(400, "Invalid verification token.");
   }
 
   if (user.isEmailVerified) {
@@ -126,29 +110,21 @@ export async function verifyEmail(token) {
 
   return {
     success: true,
-    message:
-      "Email verified successfully. You can now log in.",
+    message: "Email verified successfully. You can now log in.",
   };
 }
 export async function resendVerificationEmail(email) {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(
-      404,
-      "No account found with this email.",
-    );
+    throw new ApiError(404, "No account found with this email.");
   }
 
   if (user.isEmailVerified) {
-    throw new ApiError(
-      400,
-      "Email is already verified.",
-    );
+    throw new ApiError(400, "Email is already verified.");
   }
 
-  const verificationToken =
-    generateEmailVerificationToken(user);
+  const verificationToken = generateEmailVerificationToken(user);
 
   try {
     await sendVerificationEmail({
@@ -157,21 +133,14 @@ export async function resendVerificationEmail(email) {
       verificationToken,
     });
   } catch (error) {
-    console.error(
-      "Resend verification email failed:",
-      error,
-    );
+    console.error("Resend verification email failed:", error);
 
-    throw new ApiError(
-      500,
-      "Could not send verification email.",
-    );
+    throw new ApiError(500, "Could not send verification email.");
   }
 
   return {
     success: true,
-    message:
-      "Verification email sent successfully.",
+    message: "Verification email sent successfully.",
   };
 }
 
@@ -181,33 +150,20 @@ export async function login(credentials) {
   const user = await User.findByEmail(email);
 
   if (!user) {
-    throw new ApiError(
-      401,
-      "Invalid email or password.",
-    );
+    throw new ApiError(401, "Invalid email or password.");
   }
 
-  const isPasswordCorrect =
-    await user.comparePassword(password);
+  const isPasswordCorrect = await user.comparePassword(password);
 
   if (!isPasswordCorrect) {
-    throw new ApiError(
-      401,
-      "Invalid email or password.",
-    );
+    throw new ApiError(401, "Invalid email or password.");
   }
   if (!user.isEmailVerified) {
-    throw new ApiError(
-      403,
-      "Please verify your email before logging in.",
-    );
+    throw new ApiError(403, "Please verify your email before logging in.");
   }
 
   if (!user.canLogin()) {
-    throw new ApiError(
-      403,
-      "Account is not allowed to access this resource.",
-    );
+    throw new ApiError(403, "Account is not allowed to access this resource.");
   }
 
   user.lastLoginAt = new Date();
@@ -218,8 +174,7 @@ export async function login(credentials) {
 
   const refreshToken = generateRefreshToken(user);
 
-  const tokenHash =
-    hashRefreshToken(refreshToken);
+  const tokenHash = hashRefreshToken(refreshToken);
 
   await RefreshToken.create({
     user: user._id,
@@ -253,52 +208,48 @@ export async function refreshAccessToken(refreshToken) {
 
   try {
     decoded = verifyRefreshToken(refreshToken);
-  } catch (error) {
-    throw new ApiError(
-      401,
-      "Invalid or expired refresh token.",
-    );
+  } catch {
+    throw new ApiError(401, "Invalid or expired refresh token.");
   }
 
-  const tokenHash =
-    hashRefreshToken(refreshToken);
+  const tokenHash = hashRefreshToken(refreshToken);
 
-  const storedToken =
-    await RefreshToken.findValidToken(tokenHash);
+  /*
+   * IMPORTANT:
+   *
+   * This is an atomic operation.
+   *
+   * Only one concurrent request can successfully
+   * revoke this refresh token.
+   */
+  const revokedToken = await RefreshToken.revokeValidToken(tokenHash);
 
-  if (!storedToken) {
+  if (!revokedToken) {
     throw new ApiError(
       401,
-      "Refresh token is invalid or revoked.",
+      "Refresh token is invalid or has already been used.",
     );
   }
 
   const user = await User.findById(decoded.userId);
 
   if (!user) {
-    throw new ApiError(
-      401,
-      "User not found.",
-    );
+    throw new ApiError(401, "User not found.");
   }
 
   if (!user.isEmailVerified) {
-    throw new ApiError(
-      403,
-      "Email is not verified.",
-    );
+    throw new ApiError(403, "Email is not verified.");
   }
 
-  await storedToken.revoke();
+  if (!user.canLogin()) {
+    throw new ApiError(403, "Account is not allowed to access this resource.");
+  }
 
-  const accessToken =
-    generateAccessToken(user);
+  const accessToken = generateAccessToken(user);
 
-  const newRefreshToken =
-    generateRefreshToken(user);
+  const newRefreshToken = generateRefreshToken(user);
 
-  const newTokenHash =
-    hashRefreshToken(newRefreshToken);
+  const newTokenHash = hashRefreshToken(newRefreshToken);
 
   await RefreshToken.create({
     user: user._id,
@@ -308,8 +259,8 @@ export async function refreshAccessToken(refreshToken) {
 
   return {
     success: true,
-    message:
-      "Access token refreshed successfully.",
+
+    message: "Access token refreshed successfully.",
 
     accessToken,
 
@@ -320,10 +271,10 @@ export async function refreshAccessToken(refreshToken) {
       name: user.name,
       email: user.email,
       role: user.role,
+      isEmailVerified: user.isEmailVerified,
     },
   };
 }
-
 export async function logout(refreshToken) {
   if (!refreshToken) {
     throw new ApiError(401, "Unauthorized.");
@@ -331,7 +282,7 @@ export async function logout(refreshToken) {
 
   try {
     verifyRefreshToken(refreshToken);
-  } catch (error) {
+  } catch {
     throw new ApiError(
       401,
       "Invalid or expired refresh token.",
@@ -341,18 +292,22 @@ export async function logout(refreshToken) {
   const tokenHash =
     hashRefreshToken(refreshToken);
 
-  const storedToken =
-    await RefreshToken.findValidToken(tokenHash);
-
-  if (storedToken) {
-    await storedToken.revoke();
-  }
+  await RefreshToken.findOneAndUpdate(
+    {
+      tokenHash,
+      revokedAt: null,
+    },
+    {
+      $set: {
+        revokedAt: new Date(),
+      },
+    },
+  );
 
   return {
     message: "Logged out successfully.",
   };
 }
-
 
 export async function getCurrentUser(userData) {
   return {
@@ -363,8 +318,7 @@ export async function getCurrentUser(userData) {
       name: userData.name,
       email: userData.email,
       role: userData.role,
-      isEmailVerified:
-        userData.isEmailVerified,
+      isEmailVerified: userData.isEmailVerified,
     },
   };
 }
@@ -379,8 +333,7 @@ export async function forgotPassword(email) {
     };
   }
 
-  const resetToken =
-    generatePasswordResetToken(user);
+  const resetToken = generatePasswordResetToken(user);
 
   try {
     await sendPasswordResetEmail({
@@ -389,15 +342,9 @@ export async function forgotPassword(email) {
       resetToken,
     });
   } catch (error) {
-    console.error(
-      "Password reset email failed:",
-      error,
-    );
+    console.error("Password reset email failed:", error);
 
-    throw new ApiError(
-      500,
-      "Could not send password reset email.",
-    );
+    throw new ApiError(500, "Could not send password reset email.");
   }
 
   return {
@@ -407,56 +354,31 @@ export async function forgotPassword(email) {
   };
 }
 
-export async function resetPassword({
-  token,
-  password,
-}) {
+export async function resetPassword({ token, password }) {
   let decoded;
 
   try {
-    decoded =
-      verifyPasswordResetToken(token);
+    decoded = verifyPasswordResetToken(token);
   } catch (error) {
-    throw new ApiError(
-      400,
-      "Invalid or expired password reset link.",
-    );
+    throw new ApiError(400, "Invalid or expired password reset link.");
   }
 
   if (decoded.purpose !== "password-reset") {
-    throw new ApiError(
-      400,
-      "Invalid password reset token.",
-    );
+    throw new ApiError(400, "Invalid password reset token.");
   }
 
-  const user = await User.findById(
-    decoded.userId,
-  ).select("+passwordHash");
+  const user = await User.findById(decoded.userId).select("+passwordHash");
 
   if (!user) {
-    throw new ApiError(
-      404,
-      "User not found.",
-    );
+    throw new ApiError(404, "User not found.");
   }
 
   if (user.email !== decoded.email) {
-    throw new ApiError(
-      400,
-      "Invalid password reset token.",
-    );
+    throw new ApiError(400, "Invalid password reset token.");
   }
 
-  if (
-    !user.isPasswordResetTokenValid(
-      decoded.iat,
-    )
-  ) {
-    throw new ApiError(
-      400,
-      "This password reset link is no longer valid.",
-    );
+  if (!user.isPasswordResetTokenValid(decoded.iat)) {
+    throw new ApiError(400, "This password reset link is no longer valid.");
   }
   user.passwordHash = password;
   await user.save();
@@ -474,7 +396,6 @@ export async function resetPassword({
 
   return {
     success: true,
-    message:
-      "Password reset successfully. Please log in again.",
+    message: "Password reset successfully. Please log in again.",
   };
 }
