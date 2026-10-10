@@ -14,7 +14,7 @@ import Register from "../pages/auth/Register.jsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
 import ResetPassword from "../pages/auth/ResetPassword.jsx";
 import VerifyEmail from "../pages/auth/VerifyEmail.jsx";
-
+import Account from "../pages/user/Account.jsx";
 const router = createBrowserRouter([
   {
     element: <PublicLayout />,
@@ -49,19 +49,24 @@ const router = createBrowserRouter([
   },
 
   {
-    element: <ProtectedRoute />,
-    children: [
-      {
-        element: <AppLayout />,
-        children: [
-          {
-            path: "/",
-            element: <Home />,
-          },
-        ],
-      },
-    ],
-  },
+  element: <ProtectedRoute />,
+  children: [
+    {
+      element: <AppLayout />,
+      children: [
+        {
+          path:"/",
+          element:<Home/>
+        },
+        {
+          path: "/account",
+          element: <Account />,
+        },
+        
+      ],
+    },
+  ],
+},
 
   {
     path: "*",

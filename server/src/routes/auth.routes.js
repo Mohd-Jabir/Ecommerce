@@ -1,12 +1,14 @@
 import express from "express";
 import * as authController from "../controllers/auth.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
-import { validate } from "../middlewares/auth.validator.js";
+import { validate } from "../middlewares/auth.validator.middleware.js";
 import {
   registerSchema,
   loginSchema,
   verifyEmailSchema,
-  resendVerificationSchema,forgotPasswordSchema,resetPasswordSchema
+  resendVerificationSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "../validators/auth.validator.js";
 const authRouter = express.Router();
 

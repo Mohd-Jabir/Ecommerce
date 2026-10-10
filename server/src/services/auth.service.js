@@ -114,7 +114,7 @@ export async function verifyEmail(token) {
   };
 }
 export async function resendVerificationEmail(email) {
-  const user = await User.findOne({ email });
+  const user = await User.findByEmail(email);
 
   if (!user) {
     throw new ApiError(404, "No account found with this email.");
@@ -146,9 +146,7 @@ export async function resendVerificationEmail(email) {
 
 export async function login(credentials) {
   const { email, password } = credentials;
-
-  const user = await User.findByEmail(email);
-
+const user = await User.findByEmailWithPassword(email);
   if (!user) {
     throw new ApiError(401, "Invalid email or password.");
   }
@@ -324,7 +322,7 @@ export async function getCurrentUser(userData) {
 }
 
 export async function forgotPassword(email) {
-  const user = await User.findOne({ email });
+  const user = await User.findByEmail(email);
   if (!user) {
     return {
       success: true,
