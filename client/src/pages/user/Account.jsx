@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.js";
 import {
   useMyProfile,
@@ -8,6 +9,7 @@ import {
   useDeleteAddress,
   useSetDefaultAddress,
 } from "../../hooks/useUser.js";
+import { useMyVendorProfile } from "../../hooks/useVendor.js";
 
 const emptyAddress = {
   name: "",
@@ -25,19 +27,27 @@ const inputClass =
   "mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-100";
 
 const buttonClass =
-  "rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50";
 
 const getErrorMessage = (error) =>
   error?.response?.data?.message || "Something went wrong. Please try again.";
 
 export default function Account() {
   const { logout } = useAuth();
+
   const { data: user, isPending, isError, error } = useMyProfile();
+
   const updateProfile = useUpdateMyProfile();
   const createAddress = useAddAddress();
   const editAddress = useUpdateAddress();
   const removeAddress = useDeleteAddress();
   const makeDefault = useSetDefaultAddress();
+
+  // Vendor application/profile status
+  const vendorQuery = useMyVendorProfile();
+  const vendor = vendorQuery.data;
+  const vendorStatus = vendor?.status;
+
   const [profileForm, setProfileForm] = useState(null);
   const [addressForm, setAddressForm] = useState(emptyAddress);
   const [editingId, setEditingId] = useState(null);
@@ -147,6 +157,7 @@ export default function Account() {
     };
 
     const mutation = editingId ? editAddress : createAddress;
+
     const variables = editingId
       ? { addressId: editingId, payload }
       : { ...payload, isDefault: addressForm.isDefault };
@@ -167,8 +178,9 @@ export default function Account() {
   };
 
   const handleDeleteAddress = (addressId) => {
-    if (!window.confirm("Are you sure you want to delete this address?"))
+    if (!window.confirm("Are you sure you want to delete this address?")) {
       return;
+    }
 
     setMessage("");
     setFormError("");
@@ -222,6 +234,54 @@ export default function Account() {
   const addressMutationPending =
     createAddress.isPending || editAddress.isPending;
 
+  const vendorQueryFailed =
+    vendorQuery.isError && vendorQuery.error?.response?.status !== 404;
+
+  const vendorHasNoApplication = vendorQuery.error?.response?.status === 404;
+
+  const vendorAction = () => {
+    if (vendorStatus === "approved") {
+      return {
+        label: "Open seller dashboard",
+        to: "/vendor/dashboard",
+      };
+    }
+
+    if (
+      vendorStatus === "pending" ||
+      vendorStatus === "rejected" ||
+      vendorStatus === "suspended"
+    ) {
+      return {
+        label: "View application status",
+        to: "/vendor/profile",
+      };
+    }
+
+    return {
+      label: "Apply to become a seller",
+      to: "/vendor/apply",
+    };
+  };
+
+  const sellerHeading =
+    vendorStatus === "approved"
+      ? "Your seller account"
+      : "Want to sell with us?";
+
+  const sellerDescription = {
+    approved:
+      "Manage your store, products, and orders from your seller dashboard.",
+    pending:
+      "Your application is awaiting review. Check its current status here.",
+    rejected:
+      "Your previous application was rejected. Review the status and next steps.",
+    suspended:
+      "Your seller account is suspended. Contact support for assistance.",
+  };
+
+  const sellerAction = vendorAction();
+
   return (
     <main className="min-h-screen bg-[#FAFAFA] px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-5xl space-y-8">
@@ -255,6 +315,7 @@ export default function Account() {
           </div>
         )}
 
+        {/* Personal information */}
         <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
           <h2 className="text-xl font-bold text-gray-900">
             Personal information
@@ -316,6 +377,7 @@ export default function Account() {
           </form>
         </section>
 
+        {/* Delivery addresses */}
         <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
@@ -326,6 +388,7 @@ export default function Account() {
                 Manage where your orders should be delivered.
               </p>
             </div>
+
             <button
               type="button"
               onClick={openAddAddress}
@@ -355,6 +418,7 @@ export default function Account() {
                     <h3 className="font-semibold text-gray-900">
                       {address.name}
                     </h3>
+
                     {address.isDefault && (
                       <span className="shrink-0 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
                         Default
@@ -364,7 +428,7 @@ export default function Account() {
 
                   <p className="mt-3 text-sm leading-6 text-gray-600">
                     {address.addressLine1}
-                    {address.addressLine2 && <> , {address.addressLine2}</>}
+                    {address.addressLine2 && `, ${address.addressLine2}`}
                     <br />
                     {address.city}, {address.state} {address.pincode}
                     <br />
@@ -408,6 +472,7 @@ export default function Account() {
           )}
         </section>
 
+        {/* Add/edit address form */}
         {showAddressForm && (
           <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
             <div className="flex items-start justify-between gap-4">
@@ -419,6 +484,7 @@ export default function Account() {
                   Enter the address details below.
                 </p>
               </div>
+
               <button
                 type="button"
                 onClick={() => setShowAddressForm(false)}
@@ -487,6 +553,7 @@ export default function Account() {
                       ? "Save address"
                       : "Add address"}
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setShowAddressForm(false)}
@@ -499,11 +566,83 @@ export default function Account() {
           </section>
         )}
 
+        {/* Seller application / status */}
+        <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
+          <div className="flex items-start gap-4">
+            
+
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl font-bold text-gray-900">
+                {sellerHeading}
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-gray-500">
+                {sellerDescription[vendorStatus] ||
+                  "Create your own store and start selling on our marketplace."}
+              </p>
+
+              {vendorQuery.isPending ? (
+                <div
+                  className="mt-5 h-10 w-44 animate-pulse rounded-xl bg-gray-100"
+                  aria-label="Loading seller account"
+                />
+              ) : vendorQueryFailed ? (
+                <div className="mt-5">
+                  <p role="alert" className="text-sm text-red-600">
+                    {getErrorMessage(vendorQuery.error)}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => vendorQuery.refetch()}
+                    className="mt-3 rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  >
+                    Try again
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  {vendorStatus && (
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        vendorStatus === "approved"
+                          ? "bg-green-50 text-green-700"
+                          : vendorStatus === "pending"
+                            ? "bg-amber-50 text-amber-700"
+                            : vendorStatus === "rejected"
+                              ? "bg-red-50 text-red-700"
+                              : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {vendorStatus.charAt(0).toUpperCase() +
+                        vendorStatus.slice(1)}
+                    </span>
+                  )}
+
+                  <Link to={sellerAction.to} className={buttonClass}>
+                    {sellerAction.label}
+                  </Link>
+
+                  {vendorStatus === "rejected" && (
+                    <Link
+                      to="/vendor/apply"
+                      className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                      Apply again
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Sign out */}
         <section className="rounded-2xl border border-red-100 bg-white p-5 shadow-sm sm:p-8">
           <h2 className="text-lg font-bold text-gray-900">Sign out</h2>
           <p className="mt-1 text-sm text-gray-500">
             Sign out of your account on this device.
           </p>
+
           <button
             type="button"
             onClick={logout}

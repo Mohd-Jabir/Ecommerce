@@ -15,6 +15,8 @@ import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
 import ResetPassword from "../pages/auth/ResetPassword.jsx";
 import VerifyEmail from "../pages/auth/VerifyEmail.jsx";
 import Account from "../pages/user/Account.jsx";
+import VendorApply from "../pages/vendor/VendorApply.jsx";
+import VendorProfile from "../pages/vendor/VendorProfile.jsx";
 const router = createBrowserRouter([
   {
     element: <PublicLayout />,
@@ -49,24 +51,31 @@ const router = createBrowserRouter([
   },
 
   {
-  element: <ProtectedRoute />,
-  children: [
-    {
-      element: <AppLayout />,
-      children: [
-        {
-          path:"/",
-          element:<Home/>
-        },
-        {
-          path: "/account",
-          element: <Account />,
-        },
-        
-      ],
-    },
-  ],
-},
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <AppLayout />,
+        children: [
+          {
+            path: "/",
+            element: <Home />,
+          },
+          {
+            path: "/account",
+            element: <Account />,
+          },
+          {
+            path: "vendor/apply",
+            element: <VendorApply />,
+          },
+          {
+            path: "vendor/profile",
+            element: <VendorProfile />,
+          },
+        ],
+      },
+    ],
+  },
 
   {
     path: "*",
