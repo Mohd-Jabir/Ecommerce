@@ -7,6 +7,8 @@ import { connectDB } from "./config/db.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import vendorRouter from "./routes/vendor.routes.js";
+import productRouter from "./routes/product.routes.js";
+import categoryRouter from "./routes/category.routes.js";
 const app = express();
 await connectDB();
 app.use(
@@ -25,6 +27,8 @@ app.use(cookieParser());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users",userRouter);
 app.use("/api/v1/vendors",vendorRouter);
+app.use("/api/v1/products", productRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 app.use("/api/health", (req, res) => {
   res.status(200).json({

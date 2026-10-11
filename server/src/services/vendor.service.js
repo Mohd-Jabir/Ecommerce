@@ -1,7 +1,8 @@
 import { Vendor } from "../models/Vendor.js";
 import { User } from "../models/User.js";
 import { ApiError } from "../utils/ApiError.js";
-
+import { Product } from "../models/Product.js";
+import { Category } from "../models/Category.js";
 function createSlug(value) {
   return value
     .normalize("NFKD")
@@ -122,4 +123,65 @@ export async function updateMyVendorProfile(vendor, payload) {
   await vendor.save();
 
   return vendor;
+}
+
+export async function getVendorDashboard(userId) {
+  const vendor = await Vendor.findByUserId(userId);
+
+  if (!vendor) {
+    throw new ApiError(404, "Vendor application not found.");
+  }
+
+  // Pending, rejected, and suspended vendors can still view
+  // their store status, but won't receive product statistics.
+  if (vendor.status !== "approved") {
+    return {
+      vendor,
+      stats: {
+        totalProducts: 0,
+        activeProducts: 0,
+        draftProducts: 0,
+        lowStockProducts: 0,
+        totalCategories: 0,
+      },
+    };
+  }
+
+  const [totalProducts, activeProducts, draftProducts,
+    lowStockProducts, totalCategories] = await Promise.all([
+    Product.countDocuments({ vendor: vendor._id }),
+
+    Product.countDocuments({
+      vendor: vendor._id,
+      status: "active",
+    }),
+
+    Product.countDocuments({
+      vendor: vendor._id,
+      status: "draft",
+    }),
+
+    Product.countDocuments({
+      vendor: vendor._id,
+      status: { $ne: "archived" },
+      stock: { $lte: 5 },
+    }),
+
+    Category.countDocuments({
+      createdBy: userId,
+      createdByRole: "vendor",
+      isActive: true,
+    }),
+  ]);
+
+  return {
+    vendor,
+    stats: {
+      totalProducts,
+      activeProducts,
+      draftProducts,
+      lowStockProducts,
+      totalCategories,
+    },
+  };
 }

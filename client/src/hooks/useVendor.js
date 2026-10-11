@@ -38,3 +38,16 @@ export function useApplyToBecomeVendor() {
 export function useUpdateVendorProfile() {
   return useVendorMutation(vendorApi.updateMyVendorProfile);
 }
+export function useVendorDashboard() {
+  return useQuery({
+    queryKey: ["vendor", "dashboard"],
+    queryFn: vendorApi.getVendorDashboard,
+    retry: (failureCount, error) => {
+      if ([401, 403, 404].includes(error?.response?.status)) {
+        return false;
+      }
+
+      return failureCount < 2;
+    },
+  });
+}

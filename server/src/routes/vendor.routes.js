@@ -8,6 +8,7 @@ import {
   applyVendor,
   getMyVendor,
   updateMyVendor,
+  getVendorDashboardData,
 } from "../controllers/vendor.controller.js";
 
 import {
@@ -25,5 +26,5 @@ vendorRouter.patch(
   validate(updateVendorProfileSchema),
   updateMyVendor,
 );
-
+vendorRouter.get("/dashboard", getVendorDashboardData);
 export default vendorRouter;

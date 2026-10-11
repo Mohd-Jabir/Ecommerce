@@ -2,8 +2,8 @@ import {
   applyToBecomeVendor,
   getMyVendorProfile,
   updateMyVendorProfile,
+  getVendorDashboard
 } from "../services/vendor.service.js";
-
 export async function applyVendor(req, res, next) {
   try {
     const userId = req.user?._id || req.user?.id;
@@ -42,6 +42,21 @@ export async function updateMyVendor(req, res, next) {
       success: true,
       message: "Vendor profile updated successfully.",
       data: { vendor },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getVendorDashboardData(req, res, next) {
+  try {
+    const userId = req.user?._id || req.user?.id;
+
+    const dashboard = await getVendorDashboard(userId);
+
+    res.status(200).json({
+      success: true,
+      data: dashboard,
     });
   } catch (error) {
     next(error);

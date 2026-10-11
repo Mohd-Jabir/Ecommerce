@@ -14,3 +14,7 @@ export async function updateMyVendorProfile(payload) {
   const { data } = await api.patch("/vendors/me", payload);
   return data.data.vendor;
 }
+export async function getVendorDashboard() {
+  const { data } = await api.get("/vendors/dashboard");
+  return data.data;
+}

@@ -14,10 +14,23 @@ import Register from "../pages/auth/Register.jsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
 import ResetPassword from "../pages/auth/ResetPassword.jsx";
 import VerifyEmail from "../pages/auth/VerifyEmail.jsx";
+
 import Account from "../pages/user/Account.jsx";
+
 import VendorApply from "../pages/vendor/VendorApply.jsx";
 import VendorProfile from "../pages/vendor/VendorProfile.jsx";
+import VendorDashboard from "../pages/vendor/VendorDashboard.jsx";
+
+import ProductListPage from "../pages/products/ProductListPage.jsx";
+import ProductDetailPage from "../pages/products/ProductDetailPage.jsx";
+import ProductManagementPage from "../pages/products/ProductManagementPage.jsx";
+import ProductEditorPage from "../pages/products/ProductEditorPage.jsx";
+
+
+import CategoryManagementPage from "../pages/categories/CategoryManagementPage.jsx";
+import CategoryEditorPage from "../pages/categories/CategoryEditorPage.jsx";
 const router = createBrowserRouter([
+  // Public layout
   {
     element: <PublicLayout />,
     children: [
@@ -42,14 +55,20 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: "/verify-email",
         element: <VerifyEmail />,
       },
+      {
+        path: "/products",
+        element: <ProductListPage />,
+      },
+      {
+        path: "/products/:slug",
+        element: <ProductDetailPage />,
+      },
     ],
   },
-
   {
     element: <ProtectedRoute />,
     children: [
@@ -64,19 +83,61 @@ const router = createBrowserRouter([
             path: "/account",
             element: <Account />,
           },
+
           {
-            path: "vendor/apply",
+            path: "/vendor/apply",
             element: <VendorApply />,
           },
           {
-            path: "vendor/profile",
+            path: "/vendor/profile",
             element: <VendorProfile />,
+          },
+          {
+            path: "/vendor/dashboard",
+            element: <VendorDashboard />,
+          },
+
+          // Vendor product management
+          {
+            path: "/vendor/products",
+            element: <ProductManagementPage mode="vendor" />,
+          },
+          {
+            path: "/vendor/products/new",
+            element: <ProductEditorPage mode="vendor" />,
+          },
+          {
+            path: "/vendor/products/edit/:productId",
+            element: <ProductEditorPage mode="vendor" />,
+          },
+          {
+            path: "/vendor/categories",
+            element: <CategoryManagementPage />,
+          },
+          {
+            path: "/vendor/categories/new",
+            element: <CategoryEditorPage />,
+          },
+          {
+            path: "/vendor/categories/edit/:categoryId",
+            element: <CategoryEditorPage />,
+          },
+          {
+            path: "/admin/products",
+            element: <ProductManagementPage mode="admin" />,
+          },
+          {
+            path: "/admin/products/new",
+            element: <ProductEditorPage mode="admin" />,
+          },
+          {
+            path: "/admin/products/edit/:productId",
+            element: <ProductEditorPage mode="admin" />,
           },
         ],
       },
     ],
   },
-
   {
     path: "*",
     element: <NotFound />,
