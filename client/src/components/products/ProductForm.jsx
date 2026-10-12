@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCategories } from "../../hooks/useCategory.js";
+import ImageKitImageUpload from "../common/ImageKitImageUpload.jsx";
 
 const emptyForm = {
   name: "",
@@ -25,12 +26,16 @@ export default function ProductForm({
 }) {
   const categoriesQuery = useCategories();
   const categories = categoriesQuery.data || [];
+
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!initialValues) {
-      setForm(emptyForm);
+      setForm({
+        ...emptyForm,
+        images: [{ url: "", alt: "" }],
+      });
       return;
     }
 
@@ -71,6 +76,7 @@ export default function ProductForm({
 
   function addImage() {
     if (form.images.length >= 10) return;
+
     update("images", [...form.images, { url: "", alt: "" }]);
   }
 
@@ -136,7 +142,6 @@ export default function ProductForm({
       images,
     };
 
-    // Don't allow editing status unless the caller explicitly enables it.
     if (allowStatus) {
       payload.status = form.status;
     }
@@ -281,7 +286,7 @@ export default function ProductForm({
         )}
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Product images</h3>
           <button
@@ -297,31 +302,37 @@ export default function ProductForm({
         {form.images.map((image, index) => (
           <div
             key={index}
-            className="grid gap-2 rounded-lg border border-gray-200 p-3 sm:grid-cols-[1fr_1fr_auto]"
+            className="space-y-3 rounded-lg border border-gray-200 p-3"
           >
-            <input
-              className={inputClass}
-              type="url"
-              placeholder="Image URL"
-              aria-label={`Image ${index + 1} URL`}
+            <ImageKitImageUpload
+              label={`Product image ${index + 1}`}
+              folder="/ecommerce/products"
               value={image.url}
-              onChange={(e) => updateImage(index, "url", e.target.value)}
+              onChange={(url) => updateImage(index, "url", url)}
             />
 
-            <input
-              className={inputClass}
-              placeholder="Alt text"
-              aria-label={`Image ${index + 1} alt text`}
-              value={image.alt}
-              onChange={(e) => updateImage(index, "alt", e.target.value)}
-            />
+            <div>
+              <label
+                className="mb-1 block text-sm font-medium"
+                htmlFor={`image-alt-${index}`}
+              >
+                Alt text
+              </label>
+              <input
+                id={`image-alt-${index}`}
+                className={inputClass}
+                placeholder="Describe the product image"
+                value={image.alt}
+                onChange={(e) => updateImage(index, "alt", e.target.value)}
+              />
+            </div>
 
             <button
               type="button"
               onClick={() => removeImage(index)}
               className="text-sm text-red-600"
             >
-              Remove
+              Remove image
             </button>
           </div>
         ))}

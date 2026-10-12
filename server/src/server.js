@@ -9,6 +9,7 @@ import userRouter from "./routes/user.routes.js";
 import vendorRouter from "./routes/vendor.routes.js";
 import productRouter from "./routes/product.routes.js";
 import categoryRouter from "./routes/category.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
 const app = express();
 await connectDB();
 app.use(
@@ -17,7 +18,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.use(helmet());
@@ -25,11 +26,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/users",userRouter);
-app.use("/api/v1/vendors",vendorRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/vendors", vendorRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/categories", categoryRouter);
-
+app.use("/api/v1/uploads", uploadRoutes);
 app.use("/api/health", (req, res) => {
   res.status(200).json({
     success: true,

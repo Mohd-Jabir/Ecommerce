@@ -4,6 +4,7 @@ import {
   useMyVendorProfile,
   useUpdateVendorProfile,
 } from "../../hooks/useVendor.js";
+import ImageKitImageUpload from "../../components/common/ImageKitImageUpload.jsx";
 
 export default function VendorProfile() {
   const vendorQuery = useMyVendorProfile();
@@ -57,6 +58,7 @@ export default function VendorProfile() {
       <main className="p-8">
         Unable to load your vendor profile.
         <button
+          type="button"
           onClick={() => vendorQuery.refetch()}
           className="ml-2 underline"
         >
@@ -88,7 +90,9 @@ export default function VendorProfile() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold">Vendor profile</h1>
           <span
-            className={`rounded-full px-3 py-1 text-sm font-medium ${statusStyles[vendor.status] ?? statusStyles.pending}`}
+            className={`rounded-full px-3 py-1 text-sm font-medium ${
+              statusStyles[vendor.status] ?? statusStyles.pending
+            }`}
           >
             {vendor.status}
           </span>
@@ -115,13 +119,12 @@ export default function VendorProfile() {
         )}
 
         {vendor.status === "approved" ? (
-          <form onSubmit={handleSubmit} className="mt-7 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-7 space-y-5">
             {[
               ["storeName", "Store name"],
               ["description", "Description"],
               ["contactEmail", "Contact email"],
               ["contactPhone", "Contact phone"],
-              ["logo", "Logo URL"],
             ].map(([name, label]) => (
               <div key={name}>
                 <label
@@ -130,29 +133,49 @@ export default function VendorProfile() {
                 >
                   {label}
                 </label>
-                <input
-                  id={name}
-                  name={name}
-                  type={
-                    name === "contactEmail"
-                      ? "email"
-                      : name === "logo"
-                        ? "url"
-                        : "text"
-                  }
-                  value={form[name]}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      [name]: event.target.value,
-                    }))
-                  }
-                  required={["storeName", "contactEmail"].includes(name)}
-                  maxLength={name === "description" ? 2000 : 2048}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
-                />
+                {name === "description" ? (
+                  <textarea
+                    id={name}
+                    name={name}
+                    value={form[name]}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        [name]: event.target.value,
+                      }))
+                    }
+                    maxLength={2000}
+                    rows={4}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
+                  />
+                ) : (
+                  <input
+                    id={name}
+                    name={name}
+                    type={name === "contactEmail" ? "email" : "text"}
+                    value={form[name]}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        [name]: event.target.value,
+                      }))
+                    }
+                    required={["storeName", "contactEmail"].includes(name)}
+                    maxLength={name === "contactPhone" ? 30 : 200}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
+                  />
+                )}
               </div>
             ))}
+
+            <ImageKitImageUpload
+              label="Store logo"
+              folder="/ecommerce/store-logos"
+              value={form.logo}
+              onChange={(url) =>
+                setForm((current) => ({ ...current, logo: url }))
+              }
+            />
 
             {updateMutation.isSuccess && (
               <p className="text-sm text-green-700">

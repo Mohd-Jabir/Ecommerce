@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ImageKitImageUpload from "../common/ImageKitImageUpload.jsx";
 
 const emptyForm = {
   name: "",
@@ -34,11 +35,6 @@ export default function CategoryForm({
 
     if (form.name.trim().length < 2) {
       setError("Category name must contain at least 2 characters.");
-      return;
-    }
-
-    if (form.image.trim() && !/^https?:\/\/.+/i.test(form.image.trim())) {
-      setError("Enter a valid image URL starting with http:// or https://.");
       return;
     }
 
@@ -97,31 +93,12 @@ export default function CategoryForm({
         />
       </div>
 
-      <div>
-        <label htmlFor="image" className="mb-1.5 block text-sm font-medium">
-          Image URL
-        </label>
-        <input
-          id="image"
-          name="image"
-          type="url"
-          value={form.image}
-          onChange={handleChange}
-          maxLength={2048}
-          className={inputClass}
-          placeholder="https://example.com/category.jpg"
-        />
-        {form.image && (
-          <img
-            src={form.image}
-            alt="Category preview"
-            className="mt-3 h-28 w-28 rounded-lg border object-cover"
-            onError={(event) => {
-              event.currentTarget.style.visibility = "hidden";
-            }}
-          />
-        )}
-      </div>
+      <ImageKitImageUpload
+        label="Category image"
+        folder="/ecommerce/categories"
+        value={form.image}
+        onChange={(url) => setForm((current) => ({ ...current, image: url }))}
+      />
 
       {error && (
         <p role="alert" className="text-sm text-red-600">
