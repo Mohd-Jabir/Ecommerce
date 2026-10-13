@@ -1,3 +1,4 @@
+
 import { Router } from "express";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/auth.validator.middleware.js";
@@ -15,18 +16,26 @@ import {
   updateProduct,
   deleteProduct,
   listProductReviews,
+  createProductReview,
   listMyProducts,
 } from "../controllers/product.controller.js";
 
 const productRouter = Router();
 
-// Public routes
+// Public: list products
 productRouter.get("/", listProducts);
 
 // Product reviews: use productId, not slug
 productRouter.get("/:productId/reviews", listProductReviews);
 
-// Product detail: keep this after the more specific route
+// Authenticated customers can submit reviews
+productRouter.post(
+  "/:productId/reviews",
+  authenticate,
+  createProductReview,
+);
+
+// Product detail: keep after the more specific review routes
 productRouter.get("/:slug", getProduct);
 
 // Approved vendors can create products
@@ -38,7 +47,7 @@ productRouter.post(
   createProduct,
 );
 
-// Vendor owner or admin permissions are checked in the service
+// Update product
 productRouter.patch(
   "/:productId",
   authenticate,
@@ -46,11 +55,19 @@ productRouter.patch(
   updateProduct,
 );
 
-productRouter.delete("/:productId", authenticate, deleteProduct);
+// Delete/archive product
+productRouter.delete(
+  "/:productId",
+  authenticate,
+  deleteProduct,
+);
+
+// Vendor's products
 productRouter.get(
   "/vendor/me",
   authenticate,
   requireApprovedVendor,
   listMyProducts,
 );
+
 export default productRouter;

@@ -3,6 +3,8 @@ import * as userApi from "../api/user.api.js";
 
 export const userKeys = {
   me: ["users", "me"],
+  addresses: ["users", "me", "addresses"],
+  address: (addressId) => ["users", "me", "addresses", addressId],
 };
 
 export function useMyProfile() {
@@ -46,5 +48,22 @@ export function useDeactivateMyAccount() {
   return useMutation({
     mutationFn: userApi.deactivateMyAccount,
     onSuccess: () => queryClient.clear(),
+  });
+}
+
+// Fetch all addresses
+export function useMyAddresses() {
+  return useQuery({
+    queryKey: userKeys.addresses,
+    queryFn: userApi.getMyAddresses,
+  });
+}
+
+// Fetch a single address
+export function useAddressById(addressId) {
+  return useQuery({
+    queryKey: userKeys.address(addressId),
+    queryFn: () => userApi.getAddressById(addressId),
+    enabled: Boolean(addressId),
   });
 }

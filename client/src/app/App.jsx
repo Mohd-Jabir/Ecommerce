@@ -26,9 +26,12 @@ import ProductDetailPage from "../pages/products/ProductDetailPage.jsx";
 import ProductManagementPage from "../pages/products/ProductManagementPage.jsx";
 import ProductEditorPage from "../pages/products/ProductEditorPage.jsx";
 
-
 import CategoryManagementPage from "../pages/categories/CategoryManagementPage.jsx";
 import CategoryEditorPage from "../pages/categories/CategoryEditorPage.jsx";
+import CartPage from "../pages/cart/CartPage.jsx";
+import CheckoutPage from "../pages/order/CheckoutPage.jsx";
+import OrdersPage from "../pages/order/OrdersPage.jsx";
+import OrderDetailsPage from "../pages/order/OrderDetailsPage.jsx";
 const router = createBrowserRouter([
   // Public layout
   {
@@ -82,6 +85,22 @@ const router = createBrowserRouter([
           {
             path: "/account",
             element: <Account />,
+          },
+          {
+            path: "/cart",
+            element: <CartPage />,
+          },
+          {
+            path: "/checkout",
+            element: <CheckoutPage />,
+          },
+          {
+            path: "/orders",
+            element: <OrdersPage />,
+          },
+          {
+            path: "/orders/:orderId",
+            element: <OrderDetailsPage />,
           },
 
           {

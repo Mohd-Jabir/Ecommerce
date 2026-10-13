@@ -1,4 +1,3 @@
-
 import * as userService from "../services/user.service.js";
 
 const getUserId = (req) => req.user?.id ?? req.user?._id;
@@ -8,10 +7,7 @@ const sendError = (res, error) => {
 
   return res.status(statusCode).json({
     success: false,
-    message:
-      statusCode >= 500
-        ? "Internal server error"
-        : error.message,
+    message: statusCode >= 500 ? "Internal server error" : error.message,
   });
 };
 
@@ -29,10 +25,7 @@ export const getMe = async (req, res) => {
 
 export const updateMe = async (req, res) => {
   try {
-    const user = await userService.updateMe(
-      getUserId(req),
-      req.body,
-    );
+    const user = await userService.updateMe(getUserId(req), req.body);
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
@@ -56,10 +49,7 @@ export const deleteMe = async (req, res) => {
 
 export const addAddress = async (req, res) => {
   try {
-    const address = await userService.addAddress(
-      getUserId(req),
-      req.body,
-    );
+    const address = await userService.addAddress(getUserId(req), req.body);
     return res.status(201).json({
       success: true,
       message: "Address added successfully",
@@ -113,6 +103,36 @@ export const setDefaultAddress = async (req, res) => {
       success: true,
       message: "Default address updated successfully",
       data: result,
+    });
+  } catch (error) {
+    return sendError(res, error);
+  }
+};
+
+export const getMyAddresses = async (req, res) => {
+  try {
+    const addresses = await userService.getMyAddresses(getUserId(req));
+
+    return res.status(200).json({
+      success: true,
+      count: addresses.length,
+      data: { addresses },
+    });
+  } catch (error) {
+    return sendError(res, error);
+  }
+};
+
+export const getAddressById = async (req, res) => {
+  try {
+    const address = await userService.getAddressById(
+      getUserId(req),
+      req.params.addressId,
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: { address },
     });
   } catch (error) {
     return sendError(res, error);

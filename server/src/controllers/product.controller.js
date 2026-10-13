@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
-import { ApiError } from "../utils/ApiError.js";
-import { ProductReview } from "../models/ProductReview.js";
-import * as productService from "../services/product.service.js";
 
+import * as productService from "../services/product.service.js";
+import * as productReviewService from "../services/productReview.service.js";
+
+
+// List products
 export async function listProducts(req, res, next) {
   try {
     const result = await productService.listProducts(req.query);
@@ -16,6 +17,7 @@ export async function listProducts(req, res, next) {
   }
 }
 
+// Get a single product by slug
 export async function getProduct(req, res, next) {
   try {
     const product = await productService.getProductBySlug(req.params.slug);
@@ -29,10 +31,20 @@ export async function getProduct(req, res, next) {
   }
 }
 
+// Create product
 export async function createProduct(req, res, next) {
   try {
+    const vendorId = req.vendor?._id;
+
+    if (!vendorId) {
+      return res.status(403).json({
+        success: false,
+        message: "Approved vendor information is required.",
+      });
+    }
+
     const product = await productService.createProduct(
-      req.vendor._id,
+      vendorId,
       req.body,
     );
 
@@ -46,6 +58,7 @@ export async function createProduct(req, res, next) {
   }
 }
 
+// Update product
 export async function updateProduct(req, res, next) {
   try {
     const product = await productService.updateProduct(
@@ -64,6 +77,7 @@ export async function updateProduct(req, res, next) {
   }
 }
 
+// Delete/archive product
 export async function deleteProduct(req, res, next) {
   try {
     const result = await productService.deleteProduct(
@@ -80,71 +94,53 @@ export async function deleteProduct(req, res, next) {
   }
 }
 
+// Get approved reviews for a product
 export async function listProductReviews(req, res, next) {
   try {
-    const { productId } = req.params;
-
-    if (!mongoose.isValidObjectId(productId)) {
-      throw new ApiError(400, "Invalid product ID.");
-    }
-
-    const product = await productService.getProductForReviews?.(productId);
-
-    // If you have not added a separate helper, verify the product directly.
-    if (!product) {
-      const { Product } = await import("../models/Product.js");
-      const exists = await Product.exists({
-        _id: productId,
-        status: "active",
-      });
-
-      if (!exists) {
-        throw new ApiError(404, "Product not found.");
-      }
-    }
-
-    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(
-      100,
-      Math.max(1, Number.parseInt(req.query.limit, 10) || 20),
+    const result = await productReviewService.listProductReviews(
+      req.params.productId,
+      req.query,
     );
-
-    const filter = {
-      product: productId,
-      status: "approved",
-    };
-
-    const [reviews, total] = await Promise.all([
-      ProductReview.find(filter)
-        .populate("user", "name")
-        .select("rating title comment user createdAt")
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean(),
-      ProductReview.countDocuments(filter),
-    ]);
 
     res.status(200).json({
       success: true,
-      data: {
-        reviews,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit),
-        },
-      },
+      data: result,
     });
   } catch (error) {
     next(error);
   }
 }
 
+// Submit a product review
+export async function createProductReview(req, res, next) {
+  try {
+    const review = await productReviewService.createProductReview(
+      req.params.productId,
+      req.user,
+      req.body,
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Review submitted and awaiting approval.",
+      data: { review },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// List products belonging to the authenticated vendor
 export async function listMyProducts(req, res, next) {
   try {
     const userId = req.user?._id || req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication is required.",
+      });
+    }
 
     const result = await listMyVendorProducts(userId, req.query);
 

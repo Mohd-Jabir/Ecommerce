@@ -11,6 +11,8 @@ import {
   updateAddress,
   deleteAddress,
   setDefaultAddress,
+  getAddressById,
+  getMyAddresses
 } from "../controllers/user.controller.js";
 
 import {
@@ -26,6 +28,9 @@ userRouter.use(authenticate);
 userRouter.get("/me", getMe);
 userRouter.patch("/me", validate(updateMeSchema), updateMe);
 userRouter.delete("/me", deleteMe);
+
+userRouter.get("/me/addresses", getMyAddresses);
+userRouter.get("/me/addresses/", getAddressById);
 
 userRouter.post("/me/addresses", validate(addressSchema), addAddress);
 

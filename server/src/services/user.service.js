@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import {User} from "../models/User.js";
-import {RefreshToken} from "../models/RefreshToken.js";
+import { User } from "../models/User.js";
+import { RefreshToken } from "../models/RefreshToken.js";
 import { ApiError } from "../utils/ApiError.js";
 
 const getUserOrThrow = async (userId) => {
@@ -97,4 +97,17 @@ export const setDefaultAddress = async (userId, addressId) => {
   });
   await user.save();
   return { address: targetAddress, addresses: user.addresses };
+};
+export const getMyAddresses = async (userId) => {
+  const user = await getUserOrThrow(userId);
+
+  return user.addresses;
+};
+
+export const getAddressById = async (userId, addressId) => {
+  validateAddressId(addressId);
+
+  const user = await getUserOrThrow(userId);
+
+  return getAddressOrThrow(user, addressId);
 };

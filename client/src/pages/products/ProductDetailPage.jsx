@@ -1,5 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useProduct } from "../../hooks/useProduct.js";
+import AddToCartButton from "../../components/cart/AddToCartButton.jsx";
+import ProductReviews from "../../components/products/ProductReviews.jsx";
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
@@ -10,7 +12,7 @@ export default function ProductDetailPage() {
     return <p className="p-10 text-center">Loading product...</p>;
   }
 
-  if (query.isError) {
+  if (query.isError || !product) {
     const status = query.error?.response?.status;
 
     return (
@@ -18,11 +20,13 @@ export default function ProductDetailPage() {
         <h1 className="text-2xl font-bold">
           {status === 404 ? "Product not found" : "Unable to load product"}
         </h1>
+
         <p className="mt-2 text-gray-500">
           {status === 404
             ? "This product may have been removed or is no longer available."
             : "Please check your connection and try again."}
         </p>
+
         <Link
           to="/products"
           className="mt-5 inline-block text-indigo-600 hover:underline"
@@ -59,6 +63,7 @@ export default function ProductDetailPage() {
             <p className="text-sm text-gray-500">
               {product.category?.name || "Products"}
             </p>
+
             <h1 className="mt-2 text-3xl font-bold text-gray-900">
               {product.name}
             </h1>
@@ -68,14 +73,15 @@ export default function ProductDetailPage() {
             <span className="text-2xl font-bold">
               ₹{Number(product.price).toLocaleString("en-IN")}
             </span>
-            {product.compareAtPrice > product.price && (
+
+            {Number(product.compareAtPrice) > Number(product.price) && (
               <span className="text-gray-400 line-through">
                 ₹{Number(product.compareAtPrice).toLocaleString("en-IN")}
               </span>
             )}
           </div>
 
-          {product.ratingsCount > 0 && (
+          {Number(product.ratingsCount) > 0 && (
             <p className="text-sm text-amber-600">
               ★ {Number(product.averageRating).toFixed(1)} (
               {product.ratingsCount} reviews)
@@ -88,15 +94,17 @@ export default function ProductDetailPage() {
 
           <p
             className={
-              product.stock > 0
+              Number(product.stock) > 0
                 ? "text-sm text-green-700"
                 : "text-sm text-red-600"
             }
           >
-            {product.stock > 0
+            {Number(product.stock) > 0
               ? `${product.stock} in stock`
               : "Currently out of stock"}
           </p>
+
+          <AddToCartButton product={product} />
 
           <div className="rounded-lg border p-4">
             <p className="text-sm text-gray-500">Sold by</p>
@@ -106,6 +114,9 @@ export default function ProductDetailPage() {
           </div>
         </section>
       </div>
+
+      {/* Reviews and review submission */}
+      <ProductReviews productId={product._id} />
     </main>
   );
 }

@@ -34,3 +34,15 @@ export const setDefaultAddress = async (addressId) => {
   const { data } = await api.patch(`/users/me/addresses/${addressId}/default`);
   return data.data;
 };
+
+// Fetch all saved addresses
+export const getMyAddresses = async () => {
+  const { data } = await api.get("/users/me/addresses");
+  return data.data.addresses;
+};
+
+// Fetch a single saved address
+export const getAddressById = async (addressId) => {
+  const { data } = await api.get(`/users/me/addresses/${addressId}`);
+  return data.data.address;
+};
