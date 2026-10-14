@@ -12,6 +12,37 @@ import {
 } from "../validators/auth.validator.js";
 const authRouter = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/auth/register:
+ *   post:
+ *     summary: Register a new customer
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email, password]
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Ali Akbar
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: ali@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: StrongPass123!
+ *     responses:
+ *       "201":
+ *         description: Registration successful
+ *       "400":
+ *         description: Invalid input or email already registered
+ */
 authRouter.post("/register", validate(registerSchema), authController.register);
 authRouter.post(
   "/verify-email",

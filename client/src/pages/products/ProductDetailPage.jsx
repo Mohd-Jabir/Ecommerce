@@ -1,7 +1,9 @@
 import { Link, useParams } from "react-router-dom";
+
 import { useProduct } from "../../hooks/useProduct.js";
 import AddToCartButton from "../../components/cart/AddToCartButton.jsx";
 import ProductReviews from "../../components/products/ProductReviews.jsx";
+import WishlistButton from "../../components/wishlist/WishlistButton.jsx";
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
@@ -38,6 +40,10 @@ export default function ProductDetailPage() {
   }
 
   const image = product.images?.[0];
+  const price = Number(product.price);
+  const compareAtPrice = Number(product.compareAtPrice);
+  const stock = Number(product.stock);
+  const hasDiscount = Number.isFinite(compareAtPrice) && compareAtPrice > price;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -46,6 +52,7 @@ export default function ProductDetailPage() {
       </Link>
 
       <div className="mt-6 grid gap-8 md:grid-cols-2">
+        {/* Product image */}
         <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-gray-100">
           {image?.url ? (
             <img
@@ -58,6 +65,7 @@ export default function ProductDetailPage() {
           )}
         </div>
 
+        {/* Product information */}
         <section className="space-y-5">
           <div>
             <p className="text-sm text-gray-500">
@@ -69,18 +77,27 @@ export default function ProductDetailPage() {
             </h1>
           </div>
 
-          <div className="flex items-baseline gap-3">
-            <span className="text-2xl font-bold">
-              ₹{Number(product.price).toLocaleString("en-IN")}
+          {/* Price */}
+          <div className="flex flex-wrap items-baseline gap-3">
+            <span className="text-2xl font-bold text-gray-900">
+              ₹{Number.isFinite(price) ? price.toLocaleString("en-IN") : "—"}
             </span>
 
-            {Number(product.compareAtPrice) > Number(product.price) && (
+            {hasDiscount && (
               <span className="text-gray-400 line-through">
-                ₹{Number(product.compareAtPrice).toLocaleString("en-IN")}
+                ₹{compareAtPrice.toLocaleString("en-IN")}
+              </span>
+            )}
+
+            {hasDiscount && (
+              <span className="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+                {Math.round(((compareAtPrice - price) / compareAtPrice) * 100)}%
+                OFF
               </span>
             )}
           </div>
 
+          {/* Rating */}
           {Number(product.ratingsCount) > 0 && (
             <p className="text-sm text-amber-600">
               ★ {Number(product.averageRating).toFixed(1)} (
@@ -88,35 +105,46 @@ export default function ProductDetailPage() {
             </p>
           )}
 
-          <p className="whitespace-pre-line leading-7 text-gray-600">
-            {product.description}
-          </p>
+          {/* Description */}
+          {product.description && (
+            <p className="whitespace-pre-line leading-7 text-gray-600">
+              {product.description}
+            </p>
+          )}
 
+          {/* Stock status */}
           <p
             className={
-              Number(product.stock) > 0
-                ? "text-sm text-green-700"
-                : "text-sm text-red-600"
+              stock > 0
+                ? "text-sm font-medium text-green-700"
+                : "text-sm font-medium text-red-600"
             }
           >
-            {Number(product.stock) > 0
-              ? `${product.stock} in stock`
-              : "Currently out of stock"}
+            {stock > 0 ? `${stock} in stock` : "Currently out of stock"}
           </p>
 
-          <AddToCartButton product={product} />
+          {/* Actions */}
+          <div className="flex flex-wrap items-center gap-3">
+            <AddToCartButton product={product} />
 
-          <div className="rounded-lg border p-4">
+            <WishlistButton productId={product._id} />
+          </div>
+
+          {/* Seller information */}
+          <div className="rounded-lg border border-gray-200 p-4">
             <p className="text-sm text-gray-500">Sold by</p>
-            <p className="font-medium">
+
+            <p className="font-medium text-gray-900">
               {product.vendor?.storeName || "Marketplace seller"}
             </p>
           </div>
         </section>
       </div>
 
-      {/* Reviews and review submission */}
-      <ProductReviews productId={product._id} />
+      {/* Product reviews */}
+      <section className="mt-12 border-t border-gray-200 pt-8">
+        <ProductReviews productId={product._id} />
+      </section>
     </main>
   );
 }

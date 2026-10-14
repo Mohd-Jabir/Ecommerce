@@ -2,20 +2,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useApplyToBecomeVendor } from "../../hooks/useVendor.js";
 
-export default function VendorApply() {
-  const applyMutation = useApplyToBecomeVendor();
+const initialForm = {
+  storeName: "",
+  description: "",
+  contactEmail: "",
+  contactPhone: "",
+  addressLine1: "",
+  city: "",
+  state: "",
+  pincode: "",
+  country: "India",
+};
 
-  const [form, setForm] = useState({
-    storeName: "",
-    description: "",
-    contactEmail: "",
-    contactPhone: "",
-    addressLine1: "",
-    city: "",
-    state: "",
-    pincode: "",
-    country: "India",
-  });
+export default function VendorApply() {
+  const [form, setForm] = useState(initialForm);
+  const applyMutation = useApplyToBecomeVendor();
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -27,13 +28,11 @@ export default function VendorApply() {
 
     const { addressLine1, city, state, pincode, country, ...details } = form;
 
-    const businessAddress = {
-      addressLine1,
-      city,
-      state,
-      pincode,
-      country,
-    };
+    const businessAddress = Object.fromEntries(
+      Object.entries({ addressLine1, city, state, pincode, country }).filter(
+        ([, value]) => value.trim() !== "",
+      ),
+    );
 
     applyMutation.mutate({
       ...details,
@@ -43,7 +42,8 @@ export default function VendorApply() {
 
   const errorMessage =
     applyMutation.error?.response?.data?.message ||
-    applyMutation.error?.message;
+    applyMutation.error?.message ||
+    "Unable to submit your application.";
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10">
@@ -52,13 +52,10 @@ export default function VendorApply() {
           ← Back to home
         </Link>
 
-        <h1 className="mt-5 text-2xl font-semibold text-gray-900">
-          Become a seller
-        </h1>
-
+        <h1 className="mt-5 text-2xl font-semibold">Become a seller</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Tell us about your store. Your application will be reviewed before
-          selling privileges are enabled.
+          Tell us about your store. Selling features become available after your
+          application is approved.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -68,19 +65,25 @@ export default function VendorApply() {
             value={form.storeName}
             onChange={handleChange}
             required
+            minLength={2}
+            maxLength={100}
           />
 
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor="description"
+              className="mb-1 block text-sm font-medium"
+            >
               Store description
             </label>
             <textarea
+              id="description"
               name="description"
               value={form.description}
               onChange={handleChange}
               rows={4}
               maxLength={2000}
-              className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-gray-900"
+              className="w-full rounded-lg border border-gray-300 p-3"
               placeholder="What will your store sell?"
             />
           </div>
@@ -92,6 +95,7 @@ export default function VendorApply() {
             value={form.contactEmail}
             onChange={handleChange}
             required
+            maxLength={254}
           />
 
           <Field
@@ -100,51 +104,56 @@ export default function VendorApply() {
             type="tel"
             value={form.contactPhone}
             onChange={handleChange}
+            maxLength={20}
           />
 
-          <div className="border-t border-gray-200 pt-5">
-            <h2 className="font-medium text-gray-900">Business address</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field
-                label="Address"
-                name="addressLine1"
-                value={form.addressLine1}
-                onChange={handleChange}
-              />
-              <Field
-                label="City"
-                name="city"
-                value={form.city}
-                onChange={handleChange}
-              />
-              <Field
-                label="State"
-                name="state"
-                value={form.state}
-                onChange={handleChange}
-              />
-              <Field
-                label="PIN code"
-                name="pincode"
-                value={form.pincode}
-                onChange={handleChange}
-              />
-              <Field
-                label="Country"
-                name="country"
-                value={form.country}
-                onChange={handleChange}
-              />
-            </div>
+          <h2 className="border-t pt-5 font-medium">Business address</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Address"
+              name="addressLine1"
+              value={form.addressLine1}
+              onChange={handleChange}
+              maxLength={200}
+            />
+            <Field
+              label="City"
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              maxLength={100}
+            />
+            <Field
+              label="State"
+              name="state"
+              value={form.state}
+              onChange={handleChange}
+              maxLength={100}
+            />
+            <Field
+              label="PIN code"
+              name="pincode"
+              value={form.pincode}
+              onChange={handleChange}
+              maxLength={20}
+            />
+            <Field
+              label="Country"
+              name="country"
+              value={form.country}
+              onChange={handleChange}
+              maxLength={100}
+            />
           </div>
 
           {applyMutation.isSuccess && (
-            <p className="rounded-lg bg-green-50 p-3 text-sm text-green-800">
-              Application submitted. Your status is pending review.
-              <Link to="/vendor/profile" className="ml-1 font-medium underline">
-                View application
+            <div className="rounded-lg bg-green-50 p-3 text-sm text-green-800">
+              Application submitted. You can check your status in your{" "}
+              <Link to="/vendor/profile" className="font-medium underline">
+                vendor profile
               </Link>
-            </p>
+              .
+            </div>
           )}
 
           {applyMutation.isError && (
@@ -152,14 +161,14 @@ export default function VendorApply() {
               role="alert"
               className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
             >
-              {errorMessage || "Unable to submit your application."}
+              {errorMessage}
             </p>
           )}
 
           <button
             type="submit"
             disabled={applyMutation.isPending}
-            className="w-full rounded-lg bg-gray-900 px-4 py-3 font-medium text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-gray-900 px-4 py-3 font-medium text-white disabled:opacity-60"
           >
             {applyMutation.isPending ? "Submitting..." : "Submit application"}
           </button>
@@ -176,6 +185,7 @@ function Field({
   onChange,
   type = "text",
   required = false,
+  ...props
 }) {
   return (
     <div>
@@ -192,6 +202,7 @@ function Field({
         value={value}
         onChange={onChange}
         required={required}
+        {...props}
         className="w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900"
       />
     </div>

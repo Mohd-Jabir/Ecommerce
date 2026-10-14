@@ -1,4 +1,3 @@
-
 import { useState, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext.jsx";
@@ -28,9 +27,7 @@ export default function Navbar() {
 
   const navLinkClass = ({ isActive }) =>
     `text-sm font-medium transition ${
-      isActive
-        ? "text-black"
-        : "text-gray-600 hover:text-black"
+      isActive ? "text-black" : "text-gray-600 hover:text-black"
     }`;
 
   return (
@@ -46,82 +43,78 @@ export default function Navbar() {
 
         {/* Navigation links */}
         <div className="flex flex-wrap items-center justify-end gap-4 sm:gap-5">
-          <NavLink
-            to="/"
-            end
-            className={navLinkClass}
-          >
+          <NavLink to="/" end className={navLinkClass}>
             Home
           </NavLink>
 
-          <NavLink
-            to="/products"
-            className={navLinkClass}
-          >
+          <NavLink to="/products" className={navLinkClass}>
             Products
           </NavLink>
 
-          {/* Cart */}
-          <NavLink
-            to="/cart"
-            className={navLinkClass}
-          >
-            🛒 Cart
-          </NavLink>
+          {user && (
+            <>
+              <NavLink to="/cart" className={navLinkClass}>
+                🛒 Cart
+              </NavLink>
 
-          {/* Order history */}
-          <NavLink
-            to="/orders"
-            className={navLinkClass}
-          >
-            My Orders
-          </NavLink>
+              <NavLink to="/wishlist" className={navLinkClass}>
+                ♡ Wishlist
+              </NavLink>
 
-          <NavLink
-            to="/account"
-            className={navLinkClass}
-          >
-            Account
-          </NavLink>
+              <NavLink to="/orders" className={navLinkClass}>
+                My Orders
+              </NavLink>
+
+              <NavLink to="/account" className={navLinkClass}>
+                Account
+              </NavLink>
+            </>
+          )}
 
           {/* Vendor links */}
           {user?.role === "vendor" && (
             <>
-              <NavLink
-                to="/vendor/dashboard"
-                className={navLinkClass}
-              >
+              <NavLink to="/vendor/dashboard" className={navLinkClass}>
                 Vendor Dashboard
               </NavLink>
 
-              <NavLink
-                to="/vendor/profile"
-                className={navLinkClass}
-              >
+              <NavLink to="/vendor/profile" className={navLinkClass}>
                 Store Profile
               </NavLink>
             </>
           )}
 
-          {/* Logout error */}
-          {logoutError && (
-            <p
-              role="alert"
-              className="w-full text-right text-sm text-red-600"
-            >
-              {logoutError}
-            </p>
-          )}
+          {!user ? (
+            <>
+              <NavLink to="/login" className={navLinkClass}>
+                Login
+              </NavLink>
 
-          {/* Logout */}
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </button>
+              <NavLink to="/register" className={navLinkClass}>
+                Register
+              </NavLink>
+            </>
+          ) : (
+            <>
+              {logoutError && (
+                <p
+                  role="alert"
+                  className="w-full text-right text-sm text-red-600"
+                >
+                  {logoutError}
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isLoggingOut ? "Logging out..." : "Logout"}
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </header>
