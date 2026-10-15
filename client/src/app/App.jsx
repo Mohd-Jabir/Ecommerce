@@ -7,6 +7,7 @@ import AppLayout from "../layouts/AppLayout.jsx";
 // Route guards
 import GuestRoute from "../routes/GuestRoute.jsx";
 import ProtectedRoute from "../routes/ProtectedRoute.jsx";
+import AdminRoute from "../routes/AdminRoute.jsx";
 
 // General pages
 import Home from "../pages/Home.jsx";
@@ -49,6 +50,17 @@ import OrderDetailsPage from "../pages/order/OrderDetailsPage.jsx";
 // Wishlist
 import WishlistPage from "../pages/wishlist/WishlistPage.jsx";
 
+// Admin pages
+import AdminLayout from "../components/admin/AdminLayout.jsx";
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage.jsx";
+import AdminUsersPage from "../pages/admin/AdminUsersPage.jsx";
+import AdminVendorsPage from "../pages/admin/AdminVendorsPage.jsx";
+import AdminProductsPage from "../pages/admin/AdminProductsPage.jsx";
+import AdminOrdersPage from "../pages/admin/AdminOrdersPage.jsx";
+import AdminReviewsPage from "../pages/admin/AdminReviewsPage.jsx";
+import AdminCategoriesPage from "../pages/admin/AdminCategoriesPage.jsx";
+import AdminDetailPage from "../pages/admin/AdminDetailPage.jsx";
+
 const router = createBrowserRouter([
   // Public layout
   {
@@ -58,40 +70,18 @@ const router = createBrowserRouter([
       {
         element: <GuestRoute />,
         children: [
-          {
-            path: "/login",
-            element: <Login />,
-          },
-          {
-            path: "/register",
-            element: <Register />,
-          },
-          {
-            path: "/forgot-password",
-            element: <ForgotPassword />,
-          },
-          {
-            path: "/reset-password",
-            element: <ResetPassword />,
-          },
+          { path: "/login", element: <Login /> },
+          { path: "/register", element: <Register /> },
+          { path: "/forgot-password", element: <ForgotPassword /> },
+          { path: "/reset-password", element: <ResetPassword /> },
         ],
       },
 
-      // Email verification
-      {
-        path: "/verify-email",
-        element: <VerifyEmail />,
-      },
+      { path: "/verify-email", element: <VerifyEmail /> },
 
       // Public product browsing
-      {
-        path: "/products",
-        element: <ProductListPage />,
-      },
-      {
-        path: "/products/:slug",
-        element: <ProductDetailPage />,
-      },
+      { path: "/products", element: <ProductListPage /> },
+      { path: "/products/:slug", element: <ProductDetailPage /> },
     ],
   },
 
@@ -103,54 +93,24 @@ const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           // General
-          {
-            path: "/",
-            element: <Home />,
-          },
-          {
-            path: "/account",
-            element: <Account />,
-          },
+          { path: "/", element: <Home /> },
+          { path: "/account", element: <Account /> },
 
           // Cart and wishlist
-          {
-            path: "/cart",
-            element: <CartPage />,
-          },
-          {
-            path: "/wishlist",
-            element: <WishlistPage />,
-          },
-          {
-            path: "/checkout",
-            element: <CheckoutPage />,
-          },
+          { path: "/cart", element: <CartPage /> },
+          { path: "/wishlist", element: <WishlistPage /> },
+          { path: "/checkout", element: <CheckoutPage /> },
 
           // Customer orders
-          {
-            path: "/orders",
-            element: <OrdersPage />,
-          },
-          {
-            path: "/orders/:orderId",
-            element: <OrderDetailsPage />,
-          },
+          { path: "/orders", element: <OrdersPage /> },
+          { path: "/orders/:orderId", element: <OrderDetailsPage /> },
 
           // Vendor application and profile
-          {
-            path: "/vendor/apply",
-            element: <VendorApply />,
-          },
-          {
-            path: "/vendor/profile",
-            element: <VendorProfile />,
-          },
+          { path: "/vendor/apply", element: <VendorApply /> },
+          { path: "/vendor/profile", element: <VendorProfile /> },
 
           // Vendor dashboard
-          {
-            path: "/vendor/dashboard",
-            element: <VendorDashboard />,
-          },
+          { path: "/vendor/dashboard", element: <VendorDashboard /> },
 
           // Vendor product management
           {
@@ -181,22 +141,38 @@ const router = createBrowserRouter([
           },
 
           // Vendor order management
-          {
-            path: "/vendor/orders",
-            element: <VendorOrders />,
-          },
+          { path: "/vendor/orders", element: <VendorOrders /> },
           {
             path: "/vendor/orders/:orderId",
             element: <VendorOrderDetails />,
           },
+          { path: "/vendor/analytics", element: <VendorAnalytics /> },
+        ],
+      },
+    ],
+  },
 
-          // Vendor analytics
+  // Admin routes: require an authenticated admin
+  {
+    element: <AdminRoute />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: "/admin", element: <AdminDashboardPage /> },
+          { path: "/admin/users", element: <AdminUsersPage /> },
           {
-            path: "/vendor/analytics",
-            element: <VendorAnalytics />,
+            path: "/admin/users/:id",
+            element: <AdminDetailPage resource="user" />,
           },
 
-          // Admin product management
+          { path: "/admin/vendors", element: <AdminVendorsPage /> },
+          {
+            path: "/admin/vendors/:id",
+            element: <AdminDetailPage resource="vendor" />,
+          },
+
+          // Keep your existing admin product management pages
           {
             path: "/admin/products",
             element: <ProductManagementPage mode="admin" />,
@@ -209,16 +185,30 @@ const router = createBrowserRouter([
             path: "/admin/products/edit/:productId",
             element: <ProductEditorPage mode="admin" />,
           },
+
+          { path: "/admin/orders", element: <AdminOrdersPage /> },
+          {
+            path: "/admin/orders/:id",
+            element: <AdminDetailPage resource="order" />,
+          },
+
+          { path: "/admin/reviews", element: <AdminReviewsPage /> },
+
+          {
+            path: "/admin/categories",
+            element: <AdminCategoriesPage />,
+          },
+          {
+            path: "/admin/categories/:id",
+            element: <AdminDetailPage resource="category" />,
+          },
         ],
       },
     ],
   },
 
   // Catch-all route
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default function App() {

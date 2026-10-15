@@ -22,6 +22,7 @@ import paymentRouter from "./routes/payment.routes.js";
 
 import { razorpayWebhook } from "./controllers/payment.controller.js";
 
+import adminRoutes from "./routes/admin.routes.js";
 const app = express();
 
 await connectDB();
@@ -71,7 +72,7 @@ app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/payments", paymentRouter);
-
+app.use("/api/v1/admin", adminRoutes);
 // Health check
 app.get("/api/health", (req, res) => {
   res.status(200).json({

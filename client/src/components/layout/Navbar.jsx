@@ -1,3 +1,4 @@
+
 import { useState, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext.jsx";
@@ -51,7 +52,8 @@ export default function Navbar() {
             Products
           </NavLink>
 
-          {user && (
+          {/* Customer links */}
+          {user && user.role !== "admin" && (
             <>
               <NavLink to="/cart" className={navLinkClass}>
                 🛒 Cart
@@ -84,6 +86,23 @@ export default function Navbar() {
             </>
           )}
 
+          {/* Admin links */}
+          {user?.role === "admin" && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                  isActive
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`
+              }
+            >
+              Admin Dashboard
+            </NavLink>
+          )}
+
+          {/* Login / Register / Logout */}
           {!user ? (
             <>
               <NavLink to="/login" className={navLinkClass}>
