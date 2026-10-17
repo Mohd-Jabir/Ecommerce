@@ -1,20 +1,29 @@
 import { ApiError } from "../utils/ApiError.js";
-
-export function validate(schema) {
-  return (req, res, next) => {
-    const result = schema.safeParse(req.body);
+export const validate =
+  (schema, source = "body") =>
+  (req, res, next) => {
+    const result = schema.safeParse(req[source]);
 
     if (!result.success) {
-      const errors = result.error.issues.map((issue) => ({
-        field: issue.path.join("."),
-        message: issue.message,
-      }));
-
-      return next(new ApiError(400, "Validation failed", errors));
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed.",
+        errors: result.error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
     }
 
-    req.body = result.data;
+    // Never assign directly to req.query.
+    if (source === "query") {
+      req.validatedQuery = result.data;
+    } else if (source === "params") {
+      req.validatedParams = result.data;
+    } else {
+      req.validatedBody = result.data;
+      req.body = result.data;
+    }
 
     next();
   };
-}

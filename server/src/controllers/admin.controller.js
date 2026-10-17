@@ -286,9 +286,28 @@ const changeVendorStatus = (status) =>
 
     const previousStatus = vendor.status;
 
+    // Validate the associated user exists.
+    const user = await User.findById(vendor.user);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Associated user not found.",
+      });
+    }
+
+    // Prevent changing administrator roles.
+    if (user.role === "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "An admin account cannot be approved as a vendor.",
+      });
+    }
+
+    // Update vendor status.
     vendor.status = status;
 
-    // Record review metadata when the vendor is reviewed.
+    // Record review metadata.
     if (status === "approved" || status === "rejected") {
       vendor.reviewedBy = req.user._id;
       vendor.reviewedAt = new Date();
@@ -298,9 +317,15 @@ const changeVendorStatus = (status) =>
       vendor.approvedAt = new Date();
     }
 
+    // When approved, update the associated user's role.
+    if (status === "approved") {
+      user.role = "vendor";
+      await user.save();
+    }
+
     await vendor.save();
 
-    res.json({
+    return res.json({
       success: true,
       message: `Vendor ${status} successfully.`,
       data: vendor,
