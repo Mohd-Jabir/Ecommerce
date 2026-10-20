@@ -9,11 +9,11 @@ export default function CategoryEditorPage() {
 
   if (categoryId && !category) {
     return (
-      <main className="mx-auto max-w-3xl p-6">
-        <h1 className="text-xl font-semibold text-gray-900">
+      <main className="mx-auto max-w-3xl rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">
           Category details unavailable
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-sm leading-6 text-gray-500">
           Open the category from Manage Categories to edit it.
         </p>
       </main>

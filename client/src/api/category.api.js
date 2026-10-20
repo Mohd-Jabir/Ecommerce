@@ -24,3 +24,7 @@ export async function deactivateCategory(categoryId) {
   const { data } = await api.delete(`/categories/${categoryId}`);
   return data;
 }
+export async function getMyCategories() {
+  const { data } = await api.get("/vendors/me/categories");
+  return data.data.categories;
+}

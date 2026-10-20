@@ -29,18 +29,18 @@ export default function AddToCartButton({ product }) {
   }
 
   return (
-    <div>
+    <div className="w-full">
       <button
         type="button"
         onClick={handleAdd}
         disabled={loading || outOfStock}
-        className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-lg bg-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 disabled:shadow-none"
       >
         {loading ? "Adding..." : outOfStock ? "Out of stock" : "Add to cart"}
       </button>
 
       {error && (
-        <p role="alert" className="mt-2 text-sm text-red-600">
+        <p role="alert" className="mt-2 text-sm leading-5 text-red-600">
           {error}
         </p>
       )}

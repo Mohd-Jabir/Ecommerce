@@ -1,43 +1,37 @@
-
 import { z } from "zod";
+
+// Shared business address validation
+const businessAddressSchema = z
+  .object({
+    addressLine1: z.string().trim().max(200).optional().default(""),
+    addressLine2: z.string().trim().max(200).optional().default(""),
+    city: z.string().trim().max(100).optional().default(""),
+    state: z.string().trim().max(100).optional().default(""),
+    pincode: z.string().trim().max(20).optional().default(""),
+    country: z.string().trim().max(100).optional().default("India"),
+  })
+  .strict();
 
 // Vendor application validation
 export const applyVendorSchema = z
   .object({
-    storeName: z.string().trim().min(2).max(120),
+    storeName: z.string().trim().min(2).max(100),
     description: z.string().trim().max(2000).optional().default(""),
     contactEmail: z.string().trim().email().max(254),
-    contactPhone: z.string().trim().max(30).optional().default(""),
-    businessAddress: z
-      .object({
-        street: z.string().trim().max(200).optional().default(""),
-        city: z.string().trim().max(100).optional().default(""),
-        state: z.string().trim().max(100).optional().default(""),
-        postalCode: z.string().trim().max(20).optional().default(""),
-        country: z.string().trim().max(100).optional().default(""),
-      })
-      .optional()
-      .default({}),
+    contactPhone: z.string().trim().max(20).optional().default(""),
+    businessAddress: businessAddressSchema.optional().default({}),
   })
   .strict();
 
 // Update vendor profile validation
 export const updateVendorProfileSchema = z
   .object({
-    storeName: z.string().trim().min(2).max(120).optional(),
+    storeName: z.string().trim().min(2).max(100).optional(),
     description: z.string().trim().max(2000).optional(),
     contactEmail: z.string().trim().email().max(254).optional(),
-    contactPhone: z.string().trim().max(30).optional(),
+    contactPhone: z.string().trim().max(20).optional(),
     logo: z.string().trim().url().max(2048).nullable().optional(),
-    businessAddress: z
-      .object({
-        street: z.string().trim().max(200).optional(),
-        city: z.string().trim().max(100).optional(),
-        state: z.string().trim().max(100).optional(),
-        postalCode: z.string().trim().max(20).optional(),
-        country: z.string().trim().max(100).optional(),
-      })
-      .optional(),
+    businessAddress: businessAddressSchema.optional(),
   })
   .strict()
   .refine((data) => Object.keys(data).length > 0, {

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   useAdminCategories,
@@ -18,10 +17,10 @@ const emptyForm = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-200";
+  "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
 const buttonClass =
-  "inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-50";
 
 export default function AdminCategoriesPage() {
   const [page, setPage] = useState(1);
@@ -148,7 +147,7 @@ export default function AdminCategoriesPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            className={`${buttonClass} border border-gray-300 bg-white px-3 py-2 text-gray-700 hover:bg-gray-100`}
+            className={`${buttonClass} border border-gray-300 bg-white px-3 py-2 text-gray-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700`}
             onClick={() => openEdit(category)}
           >
             Edit
@@ -156,7 +155,7 @@ export default function AdminCategoriesPage() {
 
           <button
             type="button"
-            className={`${buttonClass} border border-red-200 bg-white px-3 py-2 text-red-600 hover:bg-red-50`}
+            className={`${buttonClass} border border-red-200 bg-white px-3 py-2 text-red-600 hover:border-red-300 hover:bg-red-50`}
             disabled={remove.isPending}
             onClick={() => {
               if (
@@ -196,7 +195,7 @@ export default function AdminCategoriesPage() {
           className={`${buttonClass} ${
             showForm
               ? "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
-              : "bg-gray-900 text-white hover:bg-gray-700"
+              : "bg-orange-500 text-white shadow-sm hover:bg-orange-600"
           }`}
           onClick={showForm ? () => setShowForm(false) : openCreate}
         >
@@ -207,7 +206,7 @@ export default function AdminCategoriesPage() {
       {/* Create / edit form */}
       {showForm && (
         <form
-          className="space-y-5 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6"
+          className="space-y-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6"
           onSubmit={handleSubmit}
         >
           <div className="border-b border-gray-100 pb-4">
@@ -268,9 +267,9 @@ export default function AdminCategoriesPage() {
             </label>
           </div>
 
-          <label className="flex w-fit cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-4 py-3">
+          <label className="flex w-fit cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 transition-colors hover:border-orange-200 hover:bg-orange-50/50">
             <input
-              className="h-4 w-4 rounded border-gray-300 accent-gray-900 focus:ring-gray-900"
+              className="h-4 w-4 rounded border-gray-300 accent-orange-500 focus:ring-orange-500"
               type="checkbox"
               name="isActive"
               checked={form.isActive}
@@ -289,7 +288,7 @@ export default function AdminCategoriesPage() {
           <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-4">
             <button
               type="submit"
-              className={`${buttonClass} bg-gray-900 text-white hover:bg-gray-700`}
+              className={`${buttonClass} bg-orange-500 text-white shadow-sm hover:bg-orange-600`}
               disabled={saving}
             >
               {saving
@@ -301,7 +300,7 @@ export default function AdminCategoriesPage() {
 
             <button
               type="button"
-              className={`${buttonClass} border border-gray-300 bg-white text-gray-700 hover:bg-gray-100`}
+              className={`${buttonClass} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50`}
               onClick={() => setShowForm(false)}
             >
               Cancel
@@ -311,7 +310,7 @@ export default function AdminCategoriesPage() {
       )}
 
       {/* Search and filters */}
-      <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
         <div className="relative min-w-0 flex-1">
           <input
             className={inputClass}

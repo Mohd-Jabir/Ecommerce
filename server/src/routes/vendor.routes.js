@@ -4,7 +4,7 @@ import { Router } from "express";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/auth.validator.middleware.js";
 import { requireApprovedVendor } from "../middlewares/vendor.middleware.js";
-
+import { listMyCategories } from "../controllers/category.controller.js";
 import {
   applyVendor,
   getMyVendor,
@@ -47,7 +47,7 @@ vendorRouter.patch(
 
 // All remaining endpoints require an approved vendor.
 vendorRouter.use(requireApprovedVendor);
-
+vendorRouter.get("/me/categories", listMyCategories);
 vendorRouter.get("/dashboard", getVendorDashboardData);
 
 // Products.

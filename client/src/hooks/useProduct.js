@@ -1,14 +1,21 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import * as productApi from "../api/product.api.js";
 
 export const productKeys = {
   all: ["products"],
-  lists: () => [...productKeys.all, "list"],
-  list: (params) => [...productKeys.lists(), params],
-  detail: (slug) => [...productKeys.all, "detail", slug],
+  lists: () => ["products", "list"],
+  list: (params) => ["products", "list", params],
+  myLists: () => ["products", "mine"],
+  myList: (params) => ["products", "mine", params],
+  detail: (slug) => ["products", "detail", slug],
   reviews: (productId, params) => [
-    ...productKeys.all,
+    "products",
     "reviews",
     productId,
     params,
@@ -19,6 +26,13 @@ export function useProducts(params = {}) {
   return useQuery({
     queryKey: productKeys.list(params),
     queryFn: () => productApi.getProducts(params),
+  });
+}
+
+export function useMyProducts(params = {}) {
+  return useQuery({
+    queryKey: productKeys.myList(params),
+    queryFn: () => productApi.getMyProducts(params),
   });
 }
 
@@ -42,12 +56,13 @@ function useProductMutation(mutationFn, options = {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn,
     ...options,
+    mutationFn,
     onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: productKeys.all,
       });
+
       await options.onSuccess?.(...args);
     },
   });
@@ -63,9 +78,3 @@ export const useUpdateProduct = () =>
 
 export const useArchiveProduct = () =>
   useProductMutation(productApi.archiveProduct);
-export function useMyProducts(params = {}) {
-  return useQuery({
-    queryKey: ["products", "mine", params],
-    queryFn: () => productApi.getMyProducts(params),
-  });
-}

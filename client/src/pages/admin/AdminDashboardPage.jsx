@@ -1,11 +1,10 @@
-
 import { useAdminDashboard } from "../../hooks/useAdmin";
-
+import { Link } from "react-router-dom";
 const statCards = [
   {
     label: "Total users",
     key: "totalUsers",
-    color: "bg-blue-50 text-blue-700",
+    color: "bg-orange-50 text-orange-700",
   },
   {
     label: "Active users",
@@ -20,37 +19,37 @@ const statCards = [
   {
     label: "Total vendors",
     key: "totalVendors",
-    color: "bg-violet-50 text-violet-700",
+    color: "bg-amber-50 text-amber-700",
   },
   {
     label: "Pending vendors",
     key: "pendingVendors",
-    color: "bg-amber-50 text-amber-700",
+    color: "bg-yellow-50 text-yellow-700",
   },
   {
     label: "Total products",
     key: "totalProducts",
-    color: "bg-indigo-50 text-indigo-700",
+    color: "bg-orange-50 text-orange-700",
   },
   {
     label: "Active products",
     key: "activeProducts",
-    color: "bg-teal-50 text-teal-700",
+    color: "bg-emerald-50 text-emerald-700",
   },
   {
     label: "Total orders",
     key: "totalOrders",
-    color: "bg-sky-50 text-sky-700",
+    color: "bg-gray-100 text-gray-700",
   },
   {
     label: "Pending orders",
     key: "pendingOrders",
-    color: "bg-orange-50 text-orange-700",
+    color: "bg-amber-50 text-amber-700",
   },
   {
     label: "Total reviews",
     key: "totalReviews",
-    color: "bg-pink-50 text-pink-700",
+    color: "bg-gray-100 text-gray-700",
   },
   {
     label: "Pending reviews",
@@ -65,7 +64,7 @@ const statCards = [
   {
     label: "Active categories",
     key: "activeCategories",
-    color: "bg-green-50 text-green-700",
+    color: "bg-emerald-50 text-emerald-700",
   },
 ];
 
@@ -73,13 +72,13 @@ function StatusBadge({ value }) {
   const styles = {
     processing: "bg-amber-50 text-amber-700",
     pending: "bg-amber-50 text-amber-700",
-    confirmed: "bg-blue-50 text-blue-700",
-    shipped: "bg-indigo-50 text-indigo-700",
+    confirmed: "bg-orange-50 text-orange-700",
+    shipped: "bg-gray-100 text-gray-700",
     delivered: "bg-emerald-50 text-emerald-700",
     cancelled: "bg-red-50 text-red-700",
     paid: "bg-emerald-50 text-emerald-700",
     failed: "bg-red-50 text-red-700",
-    refunded: "bg-purple-50 text-purple-700",
+    refunded: "bg-orange-50 text-orange-700",
   };
 
   const label = value || "—";
@@ -101,9 +100,9 @@ export default function AdminDashboardPage() {
 
   if (query.isPending) {
     return (
-      <div className="flex min-h-64 items-center justify-center rounded-xl border border-gray-200 bg-white">
+      <div className="flex min-h-64 items-center justify-center rounded-2xl border border-gray-200 bg-white shadow-sm">
         <div className="text-center">
-          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900" />
+          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-orange-500" />
           <p className="text-sm text-gray-500">
             Loading dashboard...
           </p>
@@ -125,7 +124,7 @@ export default function AdminDashboardPage() {
         <button
           type="button"
           onClick={() => query.refetch()}
-          className="mt-3 rounded-lg bg-red-700 px-4 py-2 font-medium text-white transition hover:bg-red-800"
+          className="mt-3 rounded-lg bg-red-600 px-4 py-2 font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
         >
           Try again
         </button>
@@ -139,26 +138,36 @@ export default function AdminDashboardPage() {
 
   return (
     <section className="space-y-8">
-      {/* Page heading */}
-      <div>
-        <p className="text-sm font-medium text-gray-500">
-          Store management
-        </p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          Dashboard
-        </h1>
-        <p className="mt-2 text-sm text-gray-500">
-          Overview of your store performance and recent activity.
-        </p>
-      </div>
+      
+     {/* Page heading */}
+<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <p className="text-sm font-medium text-orange-600">
+      Store management
+    </p>
+    <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+      Dashboard
+    </h1>
+    <p className="mt-2 text-sm text-gray-500">
+      Overview of your store performance and recent activity.
+    </p>
+  </div>
 
+  <Link
+    to="/"
+    className="inline-flex w-fit shrink-0 items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+  >
+    <span aria-hidden="true">←</span>
+    Back to Home
+  </Link>
+</div>
       {/* Statistics */}
       <div>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
             Store overview
           </h2>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs font-medium text-gray-500">
             Live summary
           </span>
         </div>
@@ -167,7 +176,7 @@ export default function AdminDashboardPage() {
           {statCards.map((card) => (
             <article
               key={card.key}
-              className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-md"
             >
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-gray-500">
@@ -187,8 +196,8 @@ export default function AdminDashboardPage() {
           ))}
 
           {/* Revenue */}
-          <article className="rounded-xl border border-gray-200 bg-gray-900 p-5 text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-            <p className="text-sm font-medium text-gray-300">
+          <article className="rounded-xl border border-orange-200 bg-orange-500 p-5 text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600 hover:shadow-md">
+            <p className="text-sm font-medium text-orange-50">
               Paid revenue
             </p>
             <p className="mt-4 text-3xl font-bold tracking-tight">
@@ -200,7 +209,7 @@ export default function AdminDashboardPage() {
                 }
               )}
             </p>
-            <p className="mt-2 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-orange-100">
               Revenue reported by the dashboard API
             </p>
           </article>
@@ -219,7 +228,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <span className="w-fit rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
+          <span className="w-fit rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600">
             {recentOrders.length} orders
           </span>
         </div>
@@ -250,7 +259,7 @@ export default function AdminDashboardPage() {
               {recentOrders.map((order) => (
                 <tr
                   key={order._id}
-                  className="transition hover:bg-gray-50"
+                  className="transition-colors hover:bg-orange-50/40"
                 >
                   <td className="whitespace-nowrap px-5 py-4 font-semibold text-gray-900">
                     {order.orderNumber || order._id}

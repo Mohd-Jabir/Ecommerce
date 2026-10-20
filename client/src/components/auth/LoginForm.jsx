@@ -100,13 +100,19 @@ export default function LoginForm() {
       className="space-y-5"
     >
       {serverError && (
-        <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+        <div
+          role="alert"
+          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm leading-5 text-red-700"
+        >
           {serverError}
         </div>
       )}
 
       {resendMessage && (
-        <div className="rounded-xl bg-green-50 p-3 text-sm text-green-700">
+        <div
+          role="status"
+          className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-5 text-emerald-700"
+        >
           {resendMessage}
         </div>
       )}
@@ -132,7 +138,7 @@ export default function LoginForm() {
       <div className="text-right">
         <Link
           to="/forgot-password"
-          className="text-sm font-medium text-[#FF6B4A]"
+          className="text-sm font-medium text-orange-600 transition-colors hover:text-orange-700 hover:underline"
         >
           Forgot password?
         </Link>
@@ -146,12 +152,12 @@ export default function LoginForm() {
       </Button>
 
       {showResend && (
-        <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
-          <p className="text-sm font-medium text-gray-800">
+        <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+          <p className="text-sm font-semibold text-gray-800">
             Your email is not verified yet.
           </p>
 
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm leading-5 text-gray-600">
             Check your inbox for the verification link, or
             request a new verification email.
           </p>
@@ -160,7 +166,7 @@ export default function LoginForm() {
             type="button"
             onClick={handleResendVerification}
             disabled={isResending}
-            className="mt-3 text-sm font-semibold text-[#FF6B4A] hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-3 text-sm font-semibold text-orange-600 transition-colors hover:text-orange-700 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isResending
               ? "Sending..."
@@ -173,7 +179,7 @@ export default function LoginForm() {
         Don't have an account?{" "}
         <Link
           to="/register"
-          className="font-semibold text-[#FF6B4A]"
+          className="font-semibold text-orange-600 transition-colors hover:text-orange-700 hover:underline"
         >
           Create account
         </Link>

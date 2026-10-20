@@ -284,6 +284,7 @@ export async function getMyVendorProfile(userId) {
   return vendor;
 }
 
+
 export async function updateMyVendorProfile(vendor, payload) {
   const allowed = [
     "storeName",
@@ -291,7 +292,6 @@ export async function updateMyVendorProfile(vendor, payload) {
     "contactEmail",
     "contactPhone",
     "logo",
-    "businessAddress",
   ];
 
   for (const field of allowed) {
@@ -300,13 +300,36 @@ export async function updateMyVendorProfile(vendor, payload) {
     }
   }
 
+  if (payload.businessAddress !== undefined) {
+    const addressFields = [
+      "addressLine1",
+      "addressLine2",
+      "city",
+      "state",
+      "pincode",
+      "country",
+    ];
+
+    for (const field of addressFields) {
+      if (payload.businessAddress[field] !== undefined) {
+        vendor.businessAddress[field] =
+          payload.businessAddress[field];
+      }
+    }
+  }
+
   if (payload.storeName !== undefined) {
-    vendor.slug = await generateUniqueVendorSlug(payload.storeName, vendor._id);
+    vendor.slug = await generateUniqueVendorSlug(
+      payload.storeName,
+      vendor._id,
+    );
   }
 
   await vendor.save();
+
   return vendor;
 }
+
 
 // ─────────────────────────────────────────
 // Dashboard

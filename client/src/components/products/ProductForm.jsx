@@ -15,7 +15,7 @@ const emptyForm = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:border-indigo-500";
+  "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
 export default function ProductForm({
   initialValues,
@@ -169,9 +169,9 @@ export default function ProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="mb-1.5 block text-sm font-medium">
+        <label className="mb-1.5 block text-sm font-semibold text-gray-800">
           Product name *
         </label>
         <input
@@ -185,7 +185,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium">
+        <label className="mb-1.5 block text-sm font-semibold text-gray-800">
           Description *
         </label>
         <textarea
@@ -200,7 +200,9 @@ export default function ProductForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium">SKU *</label>
+          <label className="mb-1.5 block text-sm font-semibold text-gray-800">
+            SKU *
+          </label>
           <input
             className={inputClass}
             value={form.sku}
@@ -211,7 +213,9 @@ export default function ProductForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium">Category *</label>
+          <label className="mb-1.5 block text-sm font-semibold text-gray-800">
+            Category *
+          </label>
           <select
             className={inputClass}
             value={form.category}
@@ -228,7 +232,7 @@ export default function ProductForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium">
+          <label className="mb-1.5 block text-sm font-semibold text-gray-800">
             Price (₹) *
           </label>
           <input
@@ -243,7 +247,7 @@ export default function ProductForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium">
+          <label className="mb-1.5 block text-sm font-semibold text-gray-800">
             Compare-at price (₹)
           </label>
           <input
@@ -257,7 +261,7 @@ export default function ProductForm({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium">
+          <label className="mb-1.5 block text-sm font-semibold text-gray-800">
             Stock quantity *
           </label>
           <input
@@ -273,7 +277,9 @@ export default function ProductForm({
 
         {allowStatus && (
           <div>
-            <label className="mb-1.5 block text-sm font-medium">Status</label>
+            <label className="mb-1.5 block text-sm font-semibold text-gray-800">
+              Status
+            </label>
             <select
               className={inputClass}
               value={form.status}
@@ -287,13 +293,13 @@ export default function ProductForm({
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Product images</h3>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-semibold text-gray-900">Product images</h3>
           <button
             type="button"
             onClick={addImage}
             disabled={form.images.length >= 10}
-            className="text-sm font-medium text-indigo-600 disabled:opacity-50"
+            className="rounded-md px-2 py-1 text-sm font-semibold text-orange-600 transition-colors hover:bg-orange-50 hover:text-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             + Add image
           </button>
@@ -302,7 +308,7 @@ export default function ProductForm({
         {form.images.map((image, index) => (
           <div
             key={index}
-            className="space-y-3 rounded-lg border border-gray-200 p-3"
+            className="space-y-4 rounded-xl border border-gray-200 bg-gray-50/70 p-4"
           >
             <ImageKitImageUpload
               label={`Product image ${index + 1}`}
@@ -313,7 +319,7 @@ export default function ProductForm({
 
             <div>
               <label
-                className="mb-1 block text-sm font-medium"
+                className="mb-1.5 block text-sm font-semibold text-gray-800"
                 htmlFor={`image-alt-${index}`}
               >
                 Alt text
@@ -330,7 +336,7 @@ export default function ProductForm({
             <button
               type="button"
               onClick={() => removeImage(index)}
-              className="text-sm text-red-600"
+              className="rounded-md px-2 py-1 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               Remove image
             </button>
@@ -339,7 +345,10 @@ export default function ProductForm({
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-5 text-red-700"
+        >
           {error}
         </p>
       )}
@@ -347,7 +356,7 @@ export default function ProductForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-lg bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? "Saving..." : submitLabel}
       </button>

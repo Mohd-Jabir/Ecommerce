@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,13 +52,13 @@ export default function RegisterForm() {
       className="space-y-5"
     >
       {serverError && (
-        <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm leading-5 text-red-700">
           {serverError}
         </div>
       )}
 
       {successMessage && (
-        <div className="rounded-xl bg-green-50 p-3 text-sm text-green-600">
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-5 text-emerald-700">
           {successMessage}
         </div>
       )}
@@ -105,7 +106,7 @@ export default function RegisterForm() {
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-semibold text-[#FF6B4A]"
+          className="font-semibold text-orange-600 transition-colors hover:text-orange-700 hover:underline"
         >
           Login
         </Link>

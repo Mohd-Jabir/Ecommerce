@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -33,32 +32,46 @@ export default function VendorProfile() {
   }, [vendor]);
 
   if (vendorQuery.isLoading) {
-    return <main className="p-8">Loading vendor profile...</main>;
+    return (
+      <main className="min-h-screen bg-gray-50 p-8 text-sm text-gray-500">
+        Loading vendor profile...
+      </main>
+    );
   }
 
   if (vendorQuery.isError) {
     const notFound = vendorQuery.error?.response?.status === 404;
 
     return (
-      <main className="mx-auto max-w-2xl p-8">
-        <h1 className="text-2xl font-semibold">
-          {notFound ? "No vendor application found" : "Unable to load profile"}
-        </h1>
-        <p className="mt-2 text-gray-600">
-          {notFound
-            ? "Apply to become a seller before accessing your vendor profile."
-            : vendorQuery.error?.response?.data?.message ||
-              "Please try again."}
-        </p>
-        {notFound ? (
-          <Link to="/vendor/apply" className="mt-5 inline-block underline">
-            Apply now
-          </Link>
-        ) : (
-          <button onClick={() => vendorQuery.refetch()} className="mt-4 underline">
-            Try again
-          </button>
-        )}
+      <main className="mx-auto min-h-screen max-w-2xl bg-gray-50 p-8">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            {notFound
+              ? "No vendor application found"
+              : "Unable to load profile"}
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-gray-600">
+            {notFound
+              ? "Apply to become a seller before accessing your vendor profile."
+              : vendorQuery.error?.response?.data?.message ||
+                "Please try again."}
+          </p>
+          {notFound ? (
+            <Link
+              to="/vendor/apply"
+              className="mt-5 inline-block rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+            >
+              Apply now
+            </Link>
+          ) : (
+            <button
+              onClick={() => vendorQuery.refetch()}
+              className="mt-4 text-sm font-medium text-orange-600 underline underline-offset-4 hover:text-orange-700"
+            >
+              Try again
+            </button>
+          )}
+        </div>
       </main>
     );
   }
@@ -73,8 +86,8 @@ export default function VendorProfile() {
 
     const payload = Object.fromEntries(
       Object.entries(form).filter(([key, value]) =>
-        key === "logo" ? value.trim() !== "" : true
-      )
+        key === "logo" ? value.trim() !== "" : true,
+      ),
     );
 
     updateMutation.mutate(payload);
@@ -82,38 +95,48 @@ export default function VendorProfile() {
 
   const statusStyles = {
     pending: "bg-amber-50 text-amber-800",
-    approved: "bg-green-50 text-green-800",
-    rejected: "bg-red-50 text-red-800",
+    approved: "bg-emerald-50 text-emerald-700",
+    rejected: "bg-red-50 text-red-700",
     suspended: "bg-gray-100 text-gray-700",
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10">
-      <div className="mx-auto max-w-3xl rounded-2xl bg-white p-6 shadow-sm sm:p-8">
-        <Link to="/" className="text-sm text-gray-500">← Home</Link>
+    <main className="min-h-screen bg-gray-50 px-4 py-10 sm:py-14">
+      <div className="mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+        <Link
+          to="/"
+          className="text-sm font-medium text-gray-500 transition-colors hover:text-orange-600"
+        >
+          ← Home
+        </Link>
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold">Vendor profile</h1>
-          <span className={`rounded-full px-3 py-1 text-sm ${
-            statusStyles[vendor.status] || statusStyles.pending
-          }`}>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            Vendor profile
+          </h1>
+          <span
+            className={`rounded-full px-3 py-1 text-sm font-semibold ${statusStyles[vendor.status] || statusStyles.pending}`}
+          >
             {vendor.status}
           </span>
         </div>
 
         {vendor.status !== "approved" ? (
-          <div className="mt-5 rounded-lg bg-gray-50 p-4">
-            <p className="font-medium">
+          <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <p className="font-semibold text-gray-900">
               {vendor.status === "pending" && "Application awaiting review"}
               {vendor.status === "rejected" && "Application rejected"}
               {vendor.status === "suspended" && "Account suspended"}
             </p>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm leading-6 text-gray-600">
               {vendor.rejectionReason ||
                 "You can view your store information here. Editing is available after approval."}
             </p>
             {vendor.status === "rejected" && (
-              <Link to="/vendor/apply" className="mt-3 inline-block underline">
+              <Link
+                to="/vendor/apply"
+                className="mt-3 inline-block text-sm font-semibold text-orange-600 underline-offset-4 hover:text-orange-700 hover:underline"
+              >
                 Submit a new application
               </Link>
             )}
@@ -126,14 +149,35 @@ export default function VendorProfile() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-7 space-y-5">
-            <Field label="Store name" name="storeName" value={form.storeName}
-              onChange={handleChange} required maxLength={100} />
-            <Field label="Description" name="description" value={form.description}
-              onChange={handleChange} multiline />
-            <Field label="Contact email" name="contactEmail" type="email"
-              value={form.contactEmail} onChange={handleChange} required />
-            <Field label="Contact phone" name="contactPhone"
-              value={form.contactPhone} onChange={handleChange} />
+            <Field
+              label="Store name"
+              name="storeName"
+              value={form.storeName}
+              onChange={handleChange}
+              required
+              maxLength={100}
+            />
+            <Field
+              label="Description"
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              multiline
+            />
+            <Field
+              label="Contact email"
+              name="contactEmail"
+              type="email"
+              value={form.contactEmail}
+              onChange={handleChange}
+              required
+            />
+            <Field
+              label="Contact phone"
+              name="contactPhone"
+              value={form.contactPhone}
+              onChange={handleChange}
+            />
 
             <ImageKitImageUpload
               label="Store logo"
@@ -145,20 +189,25 @@ export default function VendorProfile() {
             />
 
             {updateMutation.isSuccess && (
-              <p className="text-sm text-green-700">
+              <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
                 Profile updated successfully.
               </p>
             )}
 
             {updateMutation.isError && (
-              <p role="alert" className="text-sm text-red-700">
+              <p
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+              >
                 {updateMutation.error?.response?.data?.message ||
                   "Unable to update profile."}
               </p>
             )}
 
-            <button disabled={updateMutation.isPending}
-              className="rounded-lg bg-gray-900 px-5 py-3 text-white disabled:opacity-60">
+            <button
+              disabled={updateMutation.isPending}
+              className="rounded-lg bg-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
               {updateMutation.isPending ? "Saving..." : "Save changes"}
             </button>
           </form>
@@ -178,19 +227,36 @@ function Field({
   multiline = false,
 }) {
   const classes =
-    "w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-gray-900";
+    "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
   return (
     <div>
-      <label htmlFor={name} className="mb-1 block text-sm font-medium">
+      <label
+        htmlFor={name}
+        className="mb-1.5 block text-sm font-semibold text-gray-700"
+      >
         {label}
       </label>
       {multiline ? (
-        <textarea id={name} name={name} value={value} onChange={onChange}
-          rows={4} maxLength={2000} className={classes} />
+        <textarea
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          rows={4}
+          maxLength={2000}
+          className={classes}
+        />
       ) : (
-        <input id={name} name={name} type={type} value={value}
-          onChange={onChange} required={required} className={classes} />
+        <input
+          id={name}
+          name={name}
+          type={type}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className={classes}
+        />
       )}
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -93,31 +92,31 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-page px-4 pb-20 pt-28 text-foreground sm:px-8">
+      <main className="min-h-screen bg-gray-50 px-4 pb-20 pt-28 text-gray-900 sm:px-8">
         <div className="mx-auto max-w-7xl animate-pulse">
-          <div className="h-9 w-48 rounded-lg bg-card" />
-          <div className="mt-8 h-48 rounded-2xl bg-card" />
-          <div className="mt-4 h-48 rounded-2xl bg-card" />
+          <div className="h-9 w-48 rounded-lg bg-gray-200" />
+          <div className="mt-8 h-48 rounded-2xl bg-white" />
+          <div className="mt-4 h-48 rounded-2xl bg-white" />
         </div>
       </main>
     );
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-page px-4 pb-20 pt-28 text-foreground sm:px-8 sm:pt-32">
-      <div className="pointer-events-none absolute left-1/2 top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-primary/[0.04] blur-[110px]" />
+    <main className="relative min-h-screen overflow-hidden bg-gray-50 px-4 pb-20 pt-28 text-gray-900 sm:px-8 sm:pt-32">
+      <div className="pointer-events-none absolute left-1/2 top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-orange-100/50 blur-[110px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl">
         <header className="mb-10">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">
             Your selection
           </p>
 
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             Shopping cart
           </h1>
 
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-gray-500">
             {items.length} {items.length === 1 ? "item" : "items"} in your cart
           </p>
         </header>
@@ -125,13 +124,13 @@ export default function CartPage() {
         {error && (
           <div
             role="alert"
-            className="mb-6 rounded-xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-600"
+            className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
           >
             {error}
             <button
               type="button"
               onClick={loadCart}
-              className="ml-3 underline underline-offset-4"
+              className="ml-3 font-semibold underline underline-offset-4 transition-colors hover:text-red-900"
             >
               Retry
             </button>
@@ -139,30 +138,30 @@ export default function CartPage() {
         )}
 
         {items.length === 0 ? (
-          <section className="rounded-3xl border border-border bg-card/50 px-6 py-16 text-center sm:py-24">
-            <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10 text-3xl">
+          <section className="rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center shadow-sm sm:py-24">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-orange-50 text-3xl text-orange-600">
               ♡
             </div>
 
-            <h2 className="mt-6 text-2xl font-semibold">
+            <h2 className="mt-6 text-2xl font-bold text-gray-900">
               Your cart is waiting
             </h2>
 
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-gray-500">
               You haven't added anything yet. Explore the marketplace and
               find something you'll love.
             </p>
 
             <Link
               to="/products"
-              className="mt-7 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+              className="mt-7 inline-flex rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
             >
               Explore products
             </Link>
           </section>
         ) : (
           <div className="grid items-start gap-8 lg:grid-cols-[1fr_360px]">
-            <section className="rounded-3xl border border-border bg-card/30 px-5 sm:px-7">
+            <section className="rounded-2xl border border-gray-200 bg-white px-5 shadow-sm sm:px-7">
               {items.map((item) => (
                 <CartItem
                   key={item.product?._id || `${item._id}`}
@@ -174,26 +173,30 @@ export default function CartPage() {
               ))}
             </section>
 
-            <aside className="rounded-3xl border border-border bg-card/50 p-6 sm:p-7 lg:sticky lg:top-28">
-              <h2 className="text-xl font-semibold">Order summary</h2>
+            <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-7 lg:sticky lg:top-28">
+              <h2 className="text-xl font-bold text-gray-900">
+                Order summary
+              </h2>
 
               <div className="mt-6 space-y-4 text-sm">
                 <div className="flex justify-between gap-4">
-                  <span className="text-muted">Subtotal</span>
-                  <span>{money(subtotal)}</span>
+                  <span className="text-gray-500">Subtotal</span>
+                  <span className="font-medium text-gray-900">
+                    {money(subtotal)}
+                  </span>
                 </div>
 
                 <div className="flex justify-between gap-4">
-                  <span className="text-muted">Shipping</span>
-                  <span>Free</span>
+                  <span className="text-gray-500">Shipping</span>
+                  <span className="font-medium text-emerald-600">Free</span>
                 </div>
 
-                <div className="border-t border-border pt-4">
-                  <div className="flex justify-between gap-4 text-base font-semibold">
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex justify-between gap-4 text-base font-bold text-gray-900">
                     <span>Total</span>
                     <span>{money(subtotal)}</span>
                   </div>
-                  <p className="mt-2 text-xs text-muted">
+                  <p className="mt-2 text-xs leading-5 text-gray-500">
                     Final total is calculated by the server when you place
                     your order.
                   </p>
@@ -201,7 +204,7 @@ export default function CartPage() {
               </div>
 
               {hasUnavailableItems && (
-                <p className="mt-5 rounded-xl bg-red-500/5 p-3 text-sm text-red-600">
+                <p className="mt-5 rounded-xl border border-red-200 bg-red-50 p-3 text-sm leading-5 text-red-700">
                   Some items are unavailable or exceed current stock. Update
                   or remove them before checkout.
                 </p>
@@ -211,14 +214,14 @@ export default function CartPage() {
                 type="button"
                 disabled={hasUnavailableItems || Boolean(busyProduct)}
                 onClick={() => navigate("/checkout")}
-                className="mt-7 w-full rounded-full bg-primary px-5 py-3.5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-7 w-full rounded-lg bg-orange-500 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-orange-500"
               >
                 Continue to checkout
               </button>
 
               <Link
                 to="/products"
-                className="mt-4 block text-center text-sm text-muted transition hover:text-foreground"
+                className="mt-4 block text-center text-sm font-medium text-gray-500 transition-colors hover:text-orange-600"
               >
                 Continue shopping
               </Link>

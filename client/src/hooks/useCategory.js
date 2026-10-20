@@ -49,3 +49,10 @@ export const useUpdateCategory = () =>
 
 export const useDeactivateCategory = () =>
   useCategoryMutation(categoryApi.deactivateCategory);
+
+export function useMyCategories() {
+  return useQuery({
+    queryKey: ["my-categories"],
+    queryFn: categoryApi.getMyCategories,
+  });
+}

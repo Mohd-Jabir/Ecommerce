@@ -32,7 +32,7 @@ export default function AdminTable({
             {columns.map((column) => (
               <th
                 key={column.key}
-                className="whitespace-nowrap px-5 py-3 font-semibold text-gray-600"
+                className="whitespace-nowrap px-5 py-3.5 text-xs font-semibold uppercase tracking-wide text-gray-600"
               >
                 {column.label}
               </th>
@@ -45,14 +45,17 @@ export default function AdminTable({
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-5 py-10 text-center text-gray-500"
+                className="px-5 py-12 text-center text-sm text-gray-500"
               >
                 {emptyMessage}
               </td>
             </tr>
           ) : (
             rows.map((row) => (
-              <tr key={row._id} className="transition hover:bg-gray-50">
+              <tr
+                key={row._id}
+                className="transition-colors duration-150 hover:bg-orange-50/40"
+              >
                 {columns.map((column) => (
                   <td
                     key={column.key}

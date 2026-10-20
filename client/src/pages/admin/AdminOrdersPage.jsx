@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   useAdminOrders,
@@ -27,7 +26,7 @@ export default function AdminOrdersPage() {
   const updateStatus = useUpdateAdminOrderStatus();
 
   const inputClass =
-    "w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+    "w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
   const columns = [
     {
@@ -59,7 +58,7 @@ export default function AdminOrdersPage() {
       key: "total",
       label: "Total",
       render: (order) => (
-        <span className="font-medium text-gray-900">
+        <span className="font-semibold text-gray-900">
           {Number(order.total ?? 0).toFixed(2)}
         </span>
       ),
@@ -71,9 +70,9 @@ export default function AdminOrdersPage() {
         const paymentStatus = order.paymentStatus ?? "pending";
 
         const paymentColors = {
-          paid: "bg-green-100 text-green-700",
-          pending: "bg-yellow-100 text-yellow-700",
-          failed: "bg-red-100 text-red-700",
+          paid: "bg-emerald-50 text-emerald-700",
+          pending: "bg-amber-50 text-amber-700",
+          failed: "bg-red-50 text-red-700",
           refunded: "bg-gray-100 text-gray-700",
         };
 
@@ -96,11 +95,11 @@ export default function AdminOrdersPage() {
         const orderStatus = order.orderStatus ?? "processing";
 
         const statusColors = {
-          processing: "bg-blue-100 text-blue-700",
-          confirmed: "bg-indigo-100 text-indigo-700",
-          shipped: "bg-purple-100 text-purple-700",
-          delivered: "bg-green-100 text-green-700",
-          cancelled: "bg-red-100 text-red-700",
+          processing: "bg-amber-50 text-amber-700",
+          confirmed: "bg-orange-50 text-orange-700",
+          shipped: "bg-gray-100 text-gray-700",
+          delivered: "bg-emerald-50 text-emerald-700",
+          cancelled: "bg-red-50 text-red-700",
         };
 
         return (
@@ -144,7 +143,7 @@ export default function AdminOrdersPage() {
                 status: event.target.value,
               })
             }
-            className="min-w-32 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+            className="min-w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
           >
             {statuses.map((value) => (
               <option key={value} value={value}>
@@ -161,7 +160,7 @@ export default function AdminOrdersPage() {
     <section className="space-y-6">
       {/* Page heading */}
       <div>
-        <p className="text-sm font-medium text-blue-600">
+        <p className="text-sm font-medium text-orange-600">
           Admin / Orders
         </p>
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900">
@@ -173,7 +172,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label
@@ -234,7 +233,7 @@ export default function AdminOrdersPage() {
       )}
 
       {/* Orders table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
         <div className="border-b border-gray-200 px-5 py-4">
           <h2 className="font-semibold text-gray-900">
             All orders

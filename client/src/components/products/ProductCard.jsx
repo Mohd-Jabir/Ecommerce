@@ -4,15 +4,15 @@ export default function ProductCard({ product }) {
   const image = product.images?.[0];
 
   return (
-    <article className="overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
+    <article className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg">
       <Link to={`/products/${product.slug}`} className="block">
-        <div className="aspect-square bg-gray-100">
+        <div className="aspect-square overflow-hidden bg-gray-50">
           {image?.url ? (
             <img
               src={image.url}
               alt={image.alt || product.name}
               loading="lazy"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full items-center justify-center text-sm text-gray-400">
@@ -21,8 +21,8 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        <div className="space-y-2 p-4">
-          <h2 className="line-clamp-2 font-semibold text-gray-900">
+        <div className="space-y-2.5 p-4">
+          <h2 className="line-clamp-2 min-h-12 font-semibold leading-6 text-gray-900 transition-colors duration-200 group-hover:text-orange-600">
             {product.name}
           </h2>
 
@@ -48,7 +48,11 @@ export default function ProductCard({ product }) {
             </p>
           )}
 
-          <p className="text-sm text-gray-500">
+          <p
+            className={`text-sm font-medium ${
+              product.stock > 0 ? "text-emerald-600" : "text-red-600"
+            }`}
+          >
             {product.stock > 0 ? "In stock" : "Out of stock"}
           </p>
         </div>

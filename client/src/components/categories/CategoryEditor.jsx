@@ -31,16 +31,17 @@ export default function CategoryEditor({ category }) {
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="mb-5 text-sm font-medium text-indigo-600 hover:underline"
+        className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors duration-200 hover:text-orange-600"
       >
         ← Back
       </button>
 
       <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
           {isEditing ? "Edit category" : "Create category"}
         </h1>
-        <p className="mb-6 text-sm text-gray-500">
+
+        <p className="mb-6 text-sm leading-6 text-gray-500">
           {isEditing
             ? "Update the category details."
             : "Add a category to organize products."}

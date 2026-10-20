@@ -7,7 +7,11 @@ import ProductPagination from "../../components/products/ProductPagination.jsx";
 import DeleteProductDialog from "../../components/products/DeleteProductDialog.jsx";
 
 import { useCategories } from "../../hooks/useCategory.js";
-import { useProducts, useArchiveProduct } from "../../hooks/useProduct.js";
+import {
+  useProducts,
+  useMyProducts,
+  useArchiveProduct,
+} from "../../hooks/useProduct.js";
 
 export default function ProductManagementPage({ mode = "vendor" }) {
   const [filters, setFilters] = useState({
@@ -28,7 +32,12 @@ export default function ProductManagementPage({ mode = "vendor" }) {
     ),
   );
 
-  const productsQuery = useProducts(params);
+  // Admins see all products; vendors see only their own products.
+  const productsQuery =
+    mode === "admin"
+      ? useProducts(params)
+      : useMyProducts(params);
+
   const categoriesQuery = useCategories();
   const archiveMutation = useArchiveProduct();
 
@@ -48,12 +57,13 @@ export default function ProductManagementPage({ mode = "vendor" }) {
   }
 
   return (
-    <main className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6">
+    <main className="mx-auto min-h-screen max-w-7xl space-y-6 bg-gray-50 px-4 py-8 sm:px-6 sm:py-10">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
             {mode === "admin" ? "Manage all products" : "My products"}
           </h1>
+
           <p className="mt-1 text-sm text-gray-500">
             Search, edit, and archive products.
           </p>
@@ -61,11 +71,27 @@ export default function ProductManagementPage({ mode = "vendor" }) {
 
         <Link
           to="new"
-          className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+          className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
         >
           + Add product
         </Link>
       </header>
+
+      {categoriesQuery.isError && (
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
+          Could not load categories.
+          <button
+            type="button"
+            onClick={() => categoriesQuery.refetch()}
+            className="ml-2 font-semibold underline underline-offset-4 hover:text-red-900"
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       <ProductFilters
         filters={filters}
@@ -74,14 +100,19 @@ export default function ProductManagementPage({ mode = "vendor" }) {
       />
 
       {productsQuery.isPending ? (
-        <p className="py-12 text-center text-gray-500">Loading products...</p>
+        <p className="rounded-xl border border-gray-200 bg-white py-12 text-center text-sm text-gray-500">
+          Loading products...
+        </p>
       ) : productsQuery.isError ? (
-        <div role="alert" className="rounded-lg bg-red-50 p-4 text-red-700">
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
           Could not load products.
           <button
             type="button"
             onClick={() => productsQuery.refetch()}
-            className="ml-2 font-semibold underline"
+            className="ml-2 font-semibold underline underline-offset-4 hover:text-red-900"
           >
             Retry
           </button>
@@ -92,7 +123,9 @@ export default function ProductManagementPage({ mode = "vendor" }) {
             products={products}
             onArchive={setSelectedProduct}
             archivingId={
-              archiveMutation.isPending ? selectedProduct?._id : null
+              archiveMutation.isPending
+                ? selectedProduct?._id
+                : null
             }
           />
 
@@ -107,7 +140,7 @@ export default function ProductManagementPage({ mode = "vendor" }) {
       )}
 
       {archiveMutation.isError && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {archiveMutation.error?.response?.data?.message ||
             "Could not archive product. Please try again."}
         </p>

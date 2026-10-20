@@ -142,7 +142,10 @@ export async function listMyProducts(req, res, next) {
       });
     }
 
-    const result = await listMyVendorProducts(userId, req.query);
+    const result = await productService.listMyVendorProducts(
+      userId,
+      req.query,
+    );
 
     res.status(200).json({
       success: true,

@@ -43,13 +43,13 @@ export default function ForgotPasswordForm() {
       className="space-y-5"
     >
       {serverError && (
-        <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3.5 text-sm leading-6 text-red-700">
           {serverError}
         </div>
       )}
 
       {successMessage && (
-        <div className="rounded-xl bg-green-50 p-3 text-sm text-green-600">
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3.5 text-sm leading-6 text-emerald-700">
           {successMessage}
         </div>
       )}
@@ -67,11 +67,11 @@ export default function ForgotPasswordForm() {
         Send reset link
       </Button>
 
-      <p className="text-center text-sm text-gray-500">
+      <p className="pt-1 text-center text-sm text-gray-500">
         Remember your password?{" "}
         <Link
           to="/login"
-          className="font-semibold text-[#FF6B4A]"
+          className="font-semibold text-orange-600 transition-colors duration-200 hover:text-orange-700 hover:underline"
         >
           Login
         </Link>

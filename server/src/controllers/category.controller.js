@@ -71,3 +71,15 @@ export async function deleteCategory(req, res, next) {
     next(error);
   }
 }
+export async function listMyCategories(req, res, next) {
+  try {
+    const categories = await categoryService.listMyCategories(req.user);
+
+    res.status(200).json({
+      success: true,
+      data: { categories },
+    });
+  } catch (error) {
+    next(error);
+  }
+}

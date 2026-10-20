@@ -214,3 +214,20 @@ export async function deleteCategory(categoryId, user) {
     message: "Category deactivated successfully.",
   };
 }
+export async function listMyCategories(user) {
+  const manager = await getCategoryManager(user);
+
+  if (manager.role === "admin") {
+    return Category.find({ isActive: true })
+      .sort({ name: 1 })
+      .lean();
+  }
+
+  return Category.find({
+    isActive: true,
+    createdBy: manager.userId,
+    createdByRole: "vendor",
+  })
+    .sort({ name: 1 })
+    .lean();
+}

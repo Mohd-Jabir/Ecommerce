@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   useAdminReviews,
@@ -23,7 +22,7 @@ export default function AdminReviewsPage() {
   const remove = useDeleteAdminReview();
 
   const inputClass =
-    "w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+    "w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-500 focus:ring-4 focus:ring-orange-100";
 
   const columns = [
     {
@@ -39,7 +38,7 @@ export default function AdminReviewsPage() {
       key: "rating",
       label: "Rating",
       render: (review) => (
-        <span className="inline-flex items-center gap-1 font-medium text-gray-800">
+        <span className="inline-flex items-center gap-1.5 font-semibold text-gray-800">
           <span className="text-amber-500">★</span>
           {review.rating ?? 0}/5
         </span>
@@ -49,7 +48,7 @@ export default function AdminReviewsPage() {
       key: "comment",
       label: "Comment",
       render: (review) => (
-        <span className="block max-w-xs whitespace-pre-wrap break-words text-sm text-gray-600">
+        <span className="block max-w-xs whitespace-pre-wrap break-words text-sm leading-6 text-gray-600">
           {review.comment || "—"}
         </span>
       ),
@@ -59,16 +58,16 @@ export default function AdminReviewsPage() {
       label: "Status",
       render: (review) => {
         const statusColors = {
-          pending: "bg-amber-100 text-amber-700",
-          approved: "bg-green-100 text-green-700",
-          rejected: "bg-red-100 text-red-700",
+          pending: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+          approved: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+          rejected: "bg-red-50 text-red-700 ring-1 ring-red-200",
         };
 
         return (
           <span
-            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
+            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
               statusColors[review.status] ??
-              "bg-gray-100 text-gray-700"
+              "bg-gray-100 text-gray-600 ring-1 ring-gray-200"
             }`}
           >
             {formatStatus(review.status ?? "pending")}
@@ -90,7 +89,7 @@ export default function AdminReviewsPage() {
                   approve.mutate(review._id);
                 }
               }}
-              className="rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-orange-500 px-3.5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {approve.isPending ? "Processing..." : "Approve"}
             </button>
@@ -104,7 +103,7 @@ export default function AdminReviewsPage() {
                 remove.mutate(review._id);
               }
             }}
-            className="rounded-md border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-red-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {remove.isPending ? "Deleting..." : "Delete"}
           </button>
@@ -114,29 +113,29 @@ export default function AdminReviewsPage() {
   ];
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-7">
       {/* Page heading */}
       <div>
-        <p className="text-sm font-medium text-blue-600">
+        <p className="text-sm font-semibold text-orange-600">
           Admin / Reviews
         </p>
 
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
           Product reviews
         </h1>
 
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm leading-6 text-gray-500">
           Review customer feedback and manage review approvals.
         </p>
       </div>
 
       {/* Search and filters */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
             <label
               htmlFor="review-search"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-2 block text-sm font-semibold text-gray-700"
             >
               Search reviews
             </label>
@@ -157,7 +156,7 @@ export default function AdminReviewsPage() {
           <div>
             <label
               htmlFor="review-status"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-2 block text-sm font-semibold text-gray-700"
             >
               Filter by status
             </label>
@@ -187,7 +186,7 @@ export default function AdminReviewsPage() {
       {(approve.isError || remove.isError) && (
         <div
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm font-medium text-red-700"
         >
           {approve.error?.message ||
             remove.error?.message ||
@@ -196,13 +195,13 @@ export default function AdminReviewsPage() {
       )}
 
       {/* Reviews table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 px-5 py-4">
-          <h2 className="font-semibold text-gray-900">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="border-b border-gray-200 px-5 py-5 sm:px-6">
+          <h2 className="text-base font-bold text-gray-900">
             All reviews
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1.5 text-sm leading-5 text-gray-500">
             Approve reviews or remove inappropriate feedback.
           </p>
         </div>
@@ -217,12 +216,12 @@ export default function AdminReviewsPage() {
         {!query.isPending &&
           !query.isError &&
           (query.data?.items ?? []).length === 0 && (
-            <div className="px-6 py-10 text-center">
-              <p className="font-medium text-gray-900">
+            <div className="px-6 py-14 text-center">
+              <p className="font-semibold text-gray-900">
                 No reviews found
               </p>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-500">
                 Try changing your search or status filter.
               </p>
             </div>

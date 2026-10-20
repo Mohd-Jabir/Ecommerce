@@ -40,7 +40,7 @@ export default function OrderDetailsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-page px-4 pt-32 text-foreground">
+      <main className="min-h-screen bg-gray-50 px-4 pt-32 text-gray-900">
         Loading order...
       </main>
     );
@@ -48,11 +48,14 @@ export default function OrderDetailsPage() {
 
   if (error || !order) {
     return (
-      <main className="min-h-screen bg-page px-4 pt-32 text-foreground">
-        <p role="alert" className="text-red-600">
+      <main className="min-h-screen bg-gray-50 px-4 pt-32 text-gray-900">
+        <p role="alert" className="text-sm text-red-600">
           {error || "Order not found."}
         </p>
-        <Link to="/orders" className="mt-5 inline-block underline">
+        <Link
+          to="/orders"
+          className="mt-5 inline-block font-medium text-orange-600 underline underline-offset-4 transition-colors hover:text-orange-700"
+        >
           Back to orders
         </Link>
       </main>
@@ -62,29 +65,32 @@ export default function OrderDetailsPage() {
   const address = order.shippingAddress || {};
 
   return (
-    <main className="min-h-screen bg-page px-4 pb-20 pt-28 text-foreground sm:px-8 sm:pt-32">
+    <main className="min-h-screen bg-gray-50 px-4 pb-20 pt-28 text-gray-900 sm:px-8 sm:pt-32">
       <div className="mx-auto max-w-4xl">
-        <Link to="/orders" className="text-sm text-muted hover:text-foreground">
+        <Link
+          to="/orders"
+          className="text-sm font-medium text-gray-500 transition-colors hover:text-orange-600"
+        >
           ← Back to orders
         </Link>
 
         <header className="mt-7">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">
             Order details
           </p>
-          <h1 className="mt-3 break-words text-3xl font-semibold sm:text-4xl">
+          <h1 className="mt-3 break-words text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             {order.orderNumber}
           </h1>
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-gray-500">
             Placed {new Date(order.createdAt).toLocaleString("en-IN")}
           </p>
         </header>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
-          <section className="rounded-3xl border border-border bg-card/30 p-6">
-            <h2 className="font-semibold">Delivery address</h2>
-            <div className="mt-4 space-y-1 text-sm leading-6 text-muted">
-              <p className="font-medium text-foreground">{address.fullName}</p>
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="font-bold text-gray-900">Delivery address</h2>
+            <div className="mt-4 space-y-1 text-sm leading-6 text-gray-600">
+              <p className="font-semibold text-gray-900">{address.fullName}</p>
               <p>{address.phone}</p>
               <p>{address.addressLine1}</p>
               {address.addressLine2 && <p>{address.addressLine2}</p>}
@@ -97,39 +103,39 @@ export default function OrderDetailsPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-border bg-card/30 p-6">
-            <h2 className="font-semibold">Order status</h2>
-            <p className="mt-4 text-sm text-muted">
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="font-bold text-gray-900">Order status</h2>
+            <p className="mt-4 text-sm text-gray-500">
               Order:{" "}
-              <span className="capitalize text-foreground">
+              <span className="font-medium capitalize text-gray-900">
                 {order.orderStatus}
               </span>
             </p>
-            <p className="mt-2 text-sm text-muted">
+            <p className="mt-2 text-sm text-gray-500">
               Payment:{" "}
-              <span className="capitalize text-foreground">
+              <span className="font-medium capitalize text-gray-900">
                 {order.paymentMethod}
               </span>
             </p>
-            <p className="mt-2 text-sm text-muted">
+            <p className="mt-2 text-sm text-gray-500">
               Payment status:{" "}
-              <span className="capitalize text-foreground">
+              <span className="font-medium capitalize text-gray-900">
                 {order.paymentStatus}
               </span>
             </p>
           </section>
         </div>
 
-        <section className="mt-6 rounded-3xl border border-border bg-card/30 p-5 sm:p-7">
-          <h2 className="text-xl font-semibold">Items ordered</h2>
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+          <h2 className="text-xl font-bold text-gray-900">Items ordered</h2>
 
-          <div className="mt-5 divide-y divide-border">
+          <div className="mt-5 divide-y divide-gray-100">
             {order.items?.map((item, index) => (
               <div
                 key={`${item.product || index}`}
                 className="flex items-center gap-4 py-4"
               >
-                <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-card">
+                <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-gray-100">
                   {item.image ? (
                     <img
                       src={item.image}
@@ -137,32 +143,34 @@ export default function OrderDetailsPage() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span className="text-xs text-muted">Item</span>
+                    <span className="text-xs text-gray-500">Item</span>
                   )}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium">{item.name}</p>
-                  <p className="mt-1 text-sm text-muted">
+                  <p className="font-medium text-gray-900">{item.name}</p>
+                  <p className="mt-1 text-sm text-gray-500">
                     {money(item.unitPrice)} × {item.quantity}
                   </p>
                 </div>
 
-                <p className="font-semibold">{money(item.lineTotal)}</p>
+                <p className="font-semibold text-gray-900">
+                  {money(item.lineTotal)}
+                </p>
               </div>
             ))}
           </div>
 
-          <div className="ml-auto mt-5 max-w-sm space-y-3 border-t border-border pt-5 text-sm">
+          <div className="ml-auto mt-5 max-w-sm space-y-3 border-t border-gray-200 pt-5 text-sm">
             <div className="flex justify-between gap-4">
-              <span className="text-muted">Subtotal</span>
-              <span>{money(order.subtotal)}</span>
+              <span className="text-gray-500">Subtotal</span>
+              <span className="text-gray-900">{money(order.subtotal)}</span>
             </div>
             <div className="flex justify-between gap-4">
-              <span className="text-muted">Shipping</span>
-              <span>{money(order.shippingFee)}</span>
+              <span className="text-gray-500">Shipping</span>
+              <span className="text-gray-900">{money(order.shippingFee)}</span>
             </div>
-            <div className="flex justify-between gap-4 border-t border-border pt-4 text-base font-semibold">
+            <div className="flex justify-between gap-4 border-t border-gray-200 pt-4 text-base font-bold text-gray-900">
               <span>Total</span>
               <span>{money(order.total)}</span>
             </div>

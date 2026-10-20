@@ -53,12 +53,15 @@ export default function CategoryForm({
   }
 
   const inputClass =
-    "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100";
+    "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors duration-200 placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label htmlFor="name" className="mb-1.5 block text-sm font-medium">
+        <label
+          htmlFor="name"
+          className="mb-1.5 block text-sm font-semibold text-gray-800"
+        >
           Category name *
         </label>
         <input
@@ -77,7 +80,7 @@ export default function CategoryForm({
       <div>
         <label
           htmlFor="description"
-          className="mb-1.5 block text-sm font-medium"
+          className="mb-1.5 block text-sm font-semibold text-gray-800"
         >
           Description
         </label>
@@ -88,7 +91,7 @@ export default function CategoryForm({
           onChange={handleChange}
           maxLength={500}
           rows={4}
-          className={inputClass}
+          className={`${inputClass} resize-y`}
           placeholder="Describe this category..."
         />
       </div>
@@ -101,7 +104,7 @@ export default function CategoryForm({
       />
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm leading-5 text-red-700">
           {error}
         </p>
       )}
@@ -109,7 +112,7 @@ export default function CategoryForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-lg bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? "Saving..." : submitLabel}
       </button>

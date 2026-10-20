@@ -126,7 +126,7 @@ export default function RazorpayPaymentButton({
         },
 
         theme: {
-          color: "#2563eb",
+          color: "#F97316",
         },
       };
 
@@ -153,18 +153,21 @@ export default function RazorpayPaymentButton({
   }
 
   return (
-    <div>
+    <div className="w-full">
       <button
         type="button"
         onClick={handlePayment}
         disabled={loading || !orderId}
-        className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-lg bg-orange-500 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 disabled:shadow-none"
       >
         {loading ? "Processing..." : "Pay securely with Razorpay"}
       </button>
 
       {message && (
-        <p role="status" className="mt-3 text-sm text-amber-700">
+        <p
+          role="status"
+          className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 text-sm leading-5 text-amber-800"
+        >
           {message}
         </p>
       )}

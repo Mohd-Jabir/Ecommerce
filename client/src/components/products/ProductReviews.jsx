@@ -16,7 +16,7 @@ const formatDate = (date) => {
 };
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500";
+  "mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
 export default function ProductReviews({ productId }) {
   const queryClient = useQueryClient();
@@ -92,11 +92,15 @@ export default function ProductReviews({ productId }) {
 
   return (
     <section className="mt-12 border-t border-gray-200 pt-8">
-      <h2 className="text-2xl font-bold text-gray-900">Customer reviews</h2>
+      <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+        Customer reviews
+      </h2>
 
       {/* Review submission form */}
-      <div className="mt-6 rounded-2xl border border-gray-200 p-5 sm:p-6">
-        <h3 className="text-lg font-semibold text-gray-900">Write a review</h3>
+      <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Write a review
+        </h3>
 
         <p className="mt-1 text-sm text-gray-500">
           Share your experience with this product.
@@ -104,7 +108,7 @@ export default function ProductReviews({ productId }) {
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-5">
           <fieldset>
-            <legend className="text-sm font-medium text-gray-700">
+            <legend className="text-sm font-semibold text-gray-800">
               Your rating
             </legend>
 
@@ -124,13 +128,13 @@ export default function ProductReviews({ productId }) {
                 </button>
               ))}
 
-              <span className="ml-2 text-sm text-gray-500">
+              <span className="ml-2 text-sm font-medium text-gray-600">
                 {rating} out of 5
               </span>
             </div>
           </fieldset>
 
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-semibold text-gray-800">
             Review title
             <input
               className={inputClass}
@@ -143,7 +147,7 @@ export default function ProductReviews({ productId }) {
             />
           </label>
 
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-semibold text-gray-800">
             Your review
             <textarea
               className={inputClass}
@@ -154,7 +158,7 @@ export default function ProductReviews({ productId }) {
               rows={4}
               placeholder="What did you like or dislike?"
             />
-            <span className="mt-1 block text-right text-xs text-gray-400">
+            <span className="mt-1 block text-right text-xs font-normal text-gray-400">
               {comment.length}/3000
             </span>
           </label>
@@ -162,7 +166,7 @@ export default function ProductReviews({ productId }) {
           {formError && (
             <p
               role="alert"
-              className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
+              className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-5 text-red-700"
             >
               {formError}
             </p>
@@ -171,7 +175,7 @@ export default function ProductReviews({ productId }) {
           {success && (
             <p
               role="status"
-              className="rounded-lg bg-green-50 p-3 text-sm text-green-700"
+              className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm leading-5 text-emerald-700"
             >
               {success}
             </p>
@@ -180,7 +184,7 @@ export default function ProductReviews({ productId }) {
           <button
             type="submit"
             disabled={reviewMutation.isPending}
-            className="rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {reviewMutation.isPending
               ? "Submitting review..."
@@ -208,7 +212,7 @@ export default function ProductReviews({ productId }) {
             <button
               type="button"
               onClick={() => reviewsQuery.refetch()}
-              className="mt-2 text-sm font-medium text-indigo-600 hover:underline"
+              className="mt-2 text-sm font-semibold text-orange-600 transition-colors hover:text-orange-700 hover:underline"
             >
               Try again
             </button>
@@ -221,7 +225,7 @@ export default function ProductReviews({ productId }) {
 
             {reviews.length > 0 ? (
               <>
-                <div className="mt-4 flex items-center gap-3">
+                <div className="mt-4 flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
                   <span className="text-3xl font-bold text-gray-900">
                     {(
                       reviews.reduce(
@@ -279,7 +283,7 @@ export default function ProductReviews({ productId }) {
                         </p>
 
                         {review.title && (
-                          <h4 className="mt-2 font-medium text-gray-900">
+                          <h4 className="mt-2 font-semibold text-gray-900">
                             {review.title}
                           </h4>
                         )}
@@ -293,7 +297,7 @@ export default function ProductReviews({ productId }) {
                 </div>
               </>
             ) : (
-              <p className="mt-4 rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-500">
+              <p className="mt-4 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 text-sm leading-6 text-gray-500">
                 No approved reviews yet. Be the first to share your experience!
               </p>
             )}

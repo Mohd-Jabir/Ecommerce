@@ -31,9 +31,11 @@ export default function ProductListPage() {
 
   return (
     <main className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6">
-      <header>
-        <h1 className="text-3xl font-bold text-gray-900">Shop products</h1>
-        <p className="mt-2 text-gray-500">
+      <header className="border-b border-gray-200 pb-6">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          Shop products
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
           Browse products from our marketplace.
         </p>
       </header>
@@ -45,21 +47,26 @@ export default function ProductListPage() {
       />
 
       {productsQuery.isPending ? (
-        <p className="py-12 text-center text-gray-500">Loading products...</p>
+        <p className="py-12 text-center text-sm text-gray-500">
+          Loading products...
+        </p>
       ) : productsQuery.isError ? (
-        <div role="alert" className="rounded-lg bg-red-50 p-4 text-red-700">
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
           Could not load products. Please try again.
           <button
             type="button"
             onClick={() => productsQuery.refetch()}
-            className="ml-3 font-semibold underline"
+            className="ml-3 font-semibold underline underline-offset-4 hover:text-red-900"
           >
             Retry
           </button>
         </div>
       ) : products.length === 0 ? (
-        <div className="rounded-xl border border-dashed p-12 text-center">
-          <h2 className="font-semibold">No products found</h2>
+        <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
+          <h2 className="font-semibold text-gray-900">No products found</h2>
           <p className="mt-1 text-sm text-gray-500">
             Try different search terms or filters.
           </p>

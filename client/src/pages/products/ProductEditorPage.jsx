@@ -47,16 +47,16 @@ export default function ProductEditorPage() {
           event.preventDefault();
           navigate(-1);
         }}
-        className="text-sm text-indigo-600 hover:underline"
+        className="text-sm font-medium text-orange-600 transition-colors hover:text-orange-700 hover:underline"
       >
         ← Back
       </Link>
 
-      <div className="mt-5 rounded-xl border bg-white p-5 shadow-sm sm:p-7">
-        <h1 className="mb-2 text-2xl font-bold">
+      <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
           {isEditing ? "Edit product" : "Add product"}
         </h1>
-        <p className="mb-6 text-sm text-gray-500">
+        <p className="mb-6 text-sm leading-6 text-gray-500">
           Enter the product information below.
         </p>
 

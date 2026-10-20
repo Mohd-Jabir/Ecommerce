@@ -7,7 +7,7 @@ import { useMyAddresses } from "../../hooks/useUser.js";
 import RazorpayPaymentButton from "../../components/payments/RazorpayPaymentButton.jsx";
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-border bg-page px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary";
+  "mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100";
 
 const money = (value) =>
   new Intl.NumberFormat("en-IN", {
@@ -294,27 +294,32 @@ export default function CheckoutPage() {
 
   if (loadingCart || loadingAddresses) {
     return (
-      <main className="min-h-screen bg-page px-4 pt-32 text-foreground">
+      <main className="min-h-screen bg-gray-50 px-4 pt-32 text-gray-900">
         Loading checkout...
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-page px-4 pb-20 pt-28 text-foreground sm:px-8 sm:pt-32">
+    <main className="min-h-screen bg-gray-50 px-4 pb-20 pt-28 text-gray-900 sm:px-8 sm:pt-32">
       <div className="mx-auto max-w-6xl">
-        <Link to="/cart" className="text-sm text-muted hover:text-foreground">
+        <Link
+          to="/cart"
+          className="text-sm font-medium text-gray-500 transition-colors hover:text-orange-600"
+        >
           ← Back to cart
         </Link>
 
         <header className="mb-9 mt-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">
             Almost yours
           </p>
 
-          <h1 className="mt-3 text-4xl font-semibold">Checkout</h1>
+          <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-900">
+            Checkout
+          </h1>
 
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-gray-500">
             Choose a saved delivery address or add a new one.
           </p>
         </header>
@@ -322,23 +327,26 @@ export default function CheckoutPage() {
         {error && (
           <p
             role="alert"
-            className="mb-6 rounded-xl bg-red-500/5 p-4 text-sm text-red-600"
+            className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
           >
             {error}
           </p>
         )}
 
         {addressesError && (
-          <p className="mb-6 rounded-xl border border-border p-4 text-sm text-muted">
+          <p className="mb-6 rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-600">
             We couldn't load your saved addresses. You can enter a new address
             below.
           </p>
         )}
 
         {!items.length ? (
-          <div className="rounded-2xl border border-border p-8">
+          <div className="rounded-2xl border border-gray-200 bg-white p-8 text-gray-700 shadow-sm">
             Your cart is empty.{" "}
-            <Link className="underline" to="/products">
+            <Link
+              className="font-semibold text-orange-600 underline underline-offset-4 transition-colors hover:text-orange-700"
+              to="/products"
+            >
               Browse products
             </Link>
           </div>
@@ -347,8 +355,10 @@ export default function CheckoutPage() {
             onSubmit={handleSubmit}
             className="grid items-start gap-8 lg:grid-cols-[1fr_340px]"
           >
-            <section className="rounded-3xl border border-border bg-card/30 p-5 sm:p-8">
-              <h2 className="text-xl font-semibold">Delivery address</h2>
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+              <h2 className="text-xl font-bold text-gray-900">
+                Delivery address
+              </h2>
 
               {savedAddresses.length > 0 && !useNewAddress && (
                 <div className="mt-6 space-y-3">
@@ -360,10 +370,10 @@ export default function CheckoutPage() {
                     return (
                       <label
                         key={id || index}
-                        className={`block cursor-pointer rounded-2xl border p-4 transition ${
+                        className={`block cursor-pointer rounded-xl border p-4 transition-colors ${
                           selected
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
+                            ? "border-orange-500 bg-orange-50"
+                            : "border-gray-200 hover:border-orange-300"
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -372,28 +382,28 @@ export default function CheckoutPage() {
                             name="savedAddress"
                             checked={selected}
                             onChange={() => selectSavedAddress(savedAddress)}
-                            className="mt-1 accent-current"
+                            className="mt-1 accent-orange-500"
                             disabled={Boolean(createdOrder)}
                           />
 
                           <div className="min-w-0 flex-1 text-sm">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="font-semibold">
+                              <span className="font-semibold text-gray-900">
                                 {normalized.fullName || "Name missing"}
                               </span>
 
                               {isDefaultAddress(savedAddress) && (
-                                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
+                                <span className="rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700">
                                   Default
                                 </span>
                               )}
                             </div>
 
-                            <p className="mt-1 text-muted">
+                            <p className="mt-1 text-gray-500">
                               {normalized.phone || "Phone number missing"}
                             </p>
 
-                            <p className="mt-2 leading-6 text-muted">
+                            <p className="mt-2 leading-6 text-gray-600">
                               {formatAddress(savedAddress) ||
                                 "Address details missing"}
                             </p>
@@ -421,7 +431,7 @@ export default function CheckoutPage() {
                     <button
                       type="button"
                       onClick={startNewAddress}
-                      className="rounded-full border border-border px-4 py-2.5 text-sm font-medium transition hover:border-primary"
+                      className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-orange-500 hover:text-orange-600"
                     >
                       + Add a new address
                     </button>
@@ -429,7 +439,7 @@ export default function CheckoutPage() {
                     <button
                       type="button"
                       onClick={chooseSavedAddress}
-                      className="rounded-full border border-border px-4 py-2.5 text-sm font-medium transition hover:border-primary"
+                      className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-orange-500 hover:text-orange-600"
                     >
                       ← Choose a saved address
                     </button>
@@ -439,7 +449,7 @@ export default function CheckoutPage() {
 
               {useNewAddress && (
                 <div className="mt-6">
-                  <h3 className="font-medium">
+                  <h3 className="font-semibold text-gray-800">
                     {savedAddresses.length
                       ? "New delivery address"
                       : "Enter your delivery address"}
@@ -460,8 +470,8 @@ export default function CheckoutPage() {
                         key={name}
                         className={
                           name.startsWith("addressLine")
-                            ? "text-sm text-muted sm:col-span-2"
-                            : "text-sm text-muted"
+                            ? "text-sm font-medium text-gray-700 sm:col-span-2"
+                            : "text-sm font-medium text-gray-700"
                         }
                       >
                         {label}
@@ -497,21 +507,21 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              <div className="mt-8 rounded-2xl border border-border p-4">
-                <p className="font-medium">Payment method</p>
+              <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <p className="font-semibold text-gray-900">Payment method</p>
 
-                <p className="mt-1 text-sm text-muted">
+                <p className="mt-1 text-sm text-gray-500">
                   Secure online payment with Razorpay
                 </p>
 
                 {!createdOrder ? (
-                  <p className="mt-2 text-xs text-muted">
+                  <p className="mt-2 text-xs leading-5 text-gray-500">
                     Continue to create your order before opening Razorpay
                     Checkout.
                   </p>
                 ) : (
                   <div className="mt-4 space-y-3">
-                    <p className="text-sm text-muted">
+                    <p className="text-sm text-gray-600">
                       Order created. Complete payment to finish checkout.
                     </p>
 
@@ -529,15 +539,15 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-7 w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-50 sm:w-auto"
+                  className="mt-7 w-full rounded-lg bg-orange-500 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {submitting ? "Creating order..." : "Continue to payment"}
                 </button>
               )}
             </section>
 
-            <aside className="rounded-3xl border border-border bg-card/50 p-6">
-              <h2 className="text-lg font-semibold">Your order</h2>
+            <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-gray-900">Your order</h2>
 
               <div className="mt-5 space-y-4">
                 {items.map((item, index) => (
@@ -545,11 +555,11 @@ export default function CheckoutPage() {
                     key={item.product?._id || index}
                     className="flex justify-between gap-4 text-sm"
                   >
-                    <span className="text-muted">
+                    <span className="text-gray-600">
                       {item.product?.name || "Product"} × {item.quantity}
                     </span>
 
-                    <span className="shrink-0">
+                    <span className="shrink-0 font-medium text-gray-900">
                       {money(
                         (Number(item.product?.price) || 0) *
                           (Number(item.quantity) || 0),
@@ -559,13 +569,13 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="mt-6 border-t border-border pt-5">
-                <div className="flex justify-between gap-4 font-semibold">
+              <div className="mt-6 border-t border-gray-200 pt-5">
+                <div className="flex justify-between gap-4 font-semibold text-gray-900">
                   <span>Estimated total</span>
                   <span>{money(subtotal)}</span>
                 </div>
 
-                <p className="mt-3 text-xs leading-5 text-muted">
+                <p className="mt-3 text-xs leading-5 text-gray-500">
                   The backend must recalculate the final total using current
                   product prices, shipping charges, discounts, and stock.
                 </p>
