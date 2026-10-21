@@ -13,8 +13,8 @@ const swaggerOptions = {
       description: `
 API documentation for the MERN multi-vendor e-commerce application.
 
-Modules include authentication, users, vendors, products,
-categories, uploads, carts, and orders.
+Modules include authentication, users, vendors, products, categories,
+uploads, carts, wishlists, orders, payments, admin operations, and health checks.
       `.trim(),
     },
 
@@ -27,14 +27,26 @@ categories, uploads, carts, and orders.
 
     tags: [
       { name: "Health", description: "API health checks" },
-      { name: "Authentication", description: "Registration and authentication" },
+      {
+        name: "Authentication",
+        description: "Registration and authentication",
+      },
       { name: "Users", description: "User profiles and addresses" },
       { name: "Vendors", description: "Vendor management" },
       { name: "Products", description: "Product management" },
       { name: "Categories", description: "Product categories" },
       { name: "Uploads", description: "File uploads" },
       { name: "Cart", description: "Shopping cart operations" },
+      { name: "Wishlist", description: "User wishlist operations" },
       { name: "Orders", description: "Order management" },
+      {
+        name: "Payments",
+        description: "Razorpay payment processing and verification",
+      },
+      {
+        name: "Admin",
+        description: "Administrative dashboard and resource management",
+      },
     ],
 
     components: {
@@ -50,6 +62,7 @@ categories, uploads, carts, and orders.
       schemas: {
         ApiError: {
           type: "object",
+          required: ["success", "message"],
           properties: {
             success: {
               type: "boolean",
@@ -62,6 +75,19 @@ categories, uploads, carts, and orders.
             errors: {
               description: "Optional validation error details",
               nullable: true,
+              oneOf: [
+                {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: true,
+                  },
+                },
+                {
+                  type: "object",
+                  additionalProperties: true,
+                },
+              ],
             },
           },
         },
@@ -69,8 +95,10 @@ categories, uploads, carts, and orders.
     },
   },
 
-  // Swagger reads the OpenAPI comments from these route files.
-  apis: ["./src/routes/*.js"],
+  apis: [
+    "./src/routes/*.js",
+    "./src/app.js", // Change if your app entry point is elsewhere.
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);

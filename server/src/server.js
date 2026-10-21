@@ -50,7 +50,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Apply security headers to the application.
-app.use(helmet());
+//app.use(helmet());
 
 // Swagger UI
 app.use(
@@ -73,7 +73,33 @@ app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/admin", adminRoutes);
-// Health check
+
+/**
+ * @swagger
+ * /api/health:
+ *   get:
+ *     summary: Check API health
+ *     description: Checks whether the Ecommerce API is running.
+ *     tags: [Health]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: API is running successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               required:
+ *                 - success
+ *                 - message
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Ecommerce API is running
+ */
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
