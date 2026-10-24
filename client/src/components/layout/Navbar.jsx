@@ -57,7 +57,7 @@ export default function Navbar() {
           </NavLink>
 
           {/* Customer links */}
-          {user && user.role !== "admin" && (
+          {user && (
             <>
               <NavLink to="/cart" className={navLinkClass}>
                 🛒 Cart
