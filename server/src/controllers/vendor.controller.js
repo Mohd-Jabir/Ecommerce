@@ -148,12 +148,13 @@ export async function getMyVendorOrder(req, res, next) {
   }
 }
 
+
 export async function updateMyVendorOrderStatus(req, res, next) {
   try {
     const order = await updateVendorOrderStatus(
       req.vendor,
       req.params.orderId,
-      req.body.status,
+      req.body.orderStatus,
     );
 
     res.status(200).json({
@@ -178,3 +179,4 @@ export async function getMyVendorAnalytics(req, res, next) {
     next(error);
   }
 }
+

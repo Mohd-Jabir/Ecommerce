@@ -1,6 +1,10 @@
+
 import { z } from "zod";
 
+// ============================================
 // Shared business address validation
+// ============================================
+
 const businessAddressSchema = z
   .object({
     addressLine1: z.string().trim().max(200).optional().default(""),
@@ -12,7 +16,10 @@ const businessAddressSchema = z
   })
   .strict();
 
+// ============================================
 // Vendor application validation
+// ============================================
+
 export const applyVendorSchema = z
   .object({
     storeName: z.string().trim().min(2).max(100),
@@ -23,10 +30,13 @@ export const applyVendorSchema = z
   })
   .strict();
 
+// ============================================
 // Update vendor profile validation
+// ============================================
+
 export const updateVendorProfileSchema = z
   .object({
-    storeName: z.string().trim().min(2).max(100).optional(),
+    storeName: z.string().trim().min(2).max(100),
     description: z.string().trim().max(2000).optional(),
     contactEmail: z.string().trim().email().max(254).optional(),
     contactPhone: z.string().trim().max(20).optional(),
@@ -38,7 +48,10 @@ export const updateVendorProfileSchema = z
     message: "Provide at least one vendor profile field to update.",
   });
 
-// Create vendor product
+// ============================================
+// Create vendor product validation
+// ============================================
+
 export const createVendorProductSchema = z
   .object({
     name: z.string().trim().min(2).max(150),
@@ -63,7 +76,10 @@ export const createVendorProductSchema = z
   })
   .strict();
 
-// Update vendor product
+// ============================================
+// Update vendor product validation
+// ============================================
+
 export const updateVendorProductSchema = z
   .object({
     name: z.string().trim().min(2).max(150).optional(),
@@ -94,9 +110,16 @@ export const updateVendorProductSchema = z
     message: "Provide at least one product field to update.",
   });
 
-// Update vendor order status
+// ============================================
+// Update vendor order status validation
+// ============================================
+
 export const updateVendorOrderStatusSchema = z
   .object({
-    status: z.enum(["confirmed", "shipped", "delivered", "cancelled"]),
+    orderStatus: z.enum([
+      "confirmed",
+      "shipped",
+      "delivered",
+    ]),
   })
   .strict();

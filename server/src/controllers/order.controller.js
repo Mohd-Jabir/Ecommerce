@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 import { Cart } from "../models/Cart.js";
 import { Order } from "../models/Order.js";
@@ -36,7 +37,10 @@ function normalizeAddress(address = {}) {
   for (const field of fields) {
     if (address[field] !== undefined) {
       if (typeof address[field] !== "string") {
-        throw new ApiError(400, `Invalid shipping address field: ${field}.`);
+        throw new ApiError(
+          400,
+          `Invalid shipping address field: ${field}.`,
+        );
       }
 
       result[field] = address[field].trim();
@@ -49,7 +53,17 @@ function normalizeAddress(address = {}) {
 // POST /api/v1/orders
 export async function createOrder(req, res) {
   const userId = req.user._id;
-  const shippingAddress = normalizeAddress(req.body?.shippingAddress);
+
+  const shippingAddress = normalizeAddress(
+    req.body?.shippingAddress,
+  );
+
+  // Accept only supported payment methods.
+  const paymentMethod = req.body?.paymentMethod;
+
+  if (!["cod", "razorpay"].includes(paymentMethod)) {
+    throw new ApiError(400, "Invalid payment method.");
+  }
 
   const cart = await Cart.findOne({ user: userId });
 
@@ -58,6 +72,7 @@ export async function createOrder(req, res) {
   }
 
   const session = await mongoose.startSession();
+
   let createdOrder;
 
   try {
@@ -73,7 +88,9 @@ export async function createOrder(req, res) {
             stock: { $gte: cartItem.quantity },
           },
           {
-            $inc: { stock: -cartItem.quantity },
+            $inc: {
+              stock: -cartItem.quantity,
+            },
           },
           {
             new: true,
@@ -89,12 +106,17 @@ export async function createOrder(req, res) {
         }
 
         const unitPrice = product.price;
+
         const lineTotal =
-          Math.round((unitPrice * cartItem.quantity + Number.EPSILON) * 100) /
-          100;
+          Math.round(
+            (unitPrice * cartItem.quantity + Number.EPSILON) *
+              100,
+          ) / 100;
 
         subtotal =
-          Math.round((subtotal + lineTotal + Number.EPSILON) * 100) / 100;
+          Math.round(
+            (subtotal + lineTotal + Number.EPSILON) * 100,
+          ) / 100;
 
         orderItems.push({
           product: product._id,
@@ -108,7 +130,9 @@ export async function createOrder(req, res) {
       }
 
       const total =
-        Math.round((subtotal + SHIPPING_FEE + Number.EPSILON) * 100) / 100;
+        Math.round(
+          (subtotal + SHIPPING_FEE + Number.EPSILON) * 100,
+        ) / 100;
 
       const [order] = await Order.create(
         [
@@ -120,22 +144,38 @@ export async function createOrder(req, res) {
             subtotal,
             shippingFee: SHIPPING_FEE,
             total,
-            paymentMethod: "cod",
+
+            // Correct payment method selected by customer.
+            paymentMethod,
+
+            // Payment starts as pending.
             paymentStatus: "pending",
+
             orderStatus: "processing",
           },
         ],
         { session },
       );
 
+      // Clear cart after creating the order.
       const clearedCart = await Cart.updateOne(
-        { _id: cart._id, user: userId },
-        { $set: { items: [] } },
+        {
+          _id: cart._id,
+          user: userId,
+        },
+        {
+          $set: {
+            items: [],
+          },
+        },
         { session },
       );
 
       if (clearedCart.matchedCount !== 1) {
-        throw new ApiError(409, "Cart changed. Please try again.");
+        throw new ApiError(
+          409,
+          "Cart changed. Please try again.",
+        );
       }
 
       createdOrder = order;
@@ -153,7 +193,9 @@ export async function createOrder(req, res) {
 
 // GET /api/v1/orders
 export async function getMyOrders(req, res) {
-  const orders = await Order.find({ user: req.user._id })
+  const orders = await Order.find({
+    user: req.user._id,
+  })
     .sort({ createdAt: -1 })
     .select("-__v");
 
@@ -167,6 +209,7 @@ export async function getMyOrders(req, res) {
 // GET /api/v1/orders/:orderId
 export async function getOrderById(req, res) {
   const { orderId } = req.params;
+
   validateOrderId(orderId);
 
   const order = await Order.findOne({
@@ -187,9 +230,11 @@ export async function getOrderById(req, res) {
 // PATCH /api/v1/orders/:orderId/cancel
 export async function cancelOrder(req, res) {
   const { orderId } = req.params;
+
   validateOrderId(orderId);
 
   const session = await mongoose.startSession();
+
   let cancelledOrder;
 
   try {
@@ -203,15 +248,33 @@ export async function cancelOrder(req, res) {
         throw new ApiError(404, "Order not found.");
       }
 
-      if (!["processing", "confirmed"].includes(order.orderStatus)) {
-        throw new ApiError(400, "This order can no longer be cancelled.");
+      if (
+        !["processing", "confirmed"].includes(order.orderStatus)
+      ) {
+        throw new ApiError(
+          400,
+          "This order can no longer be cancelled.",
+        );
       }
 
-      // Restore inventory for each item in the order.
+      // Prevent cancellation of an already-paid order
+      // until your refund process has been implemented.
+      if (order.paymentStatus === "paid") {
+        throw new ApiError(
+          400,
+          "This order has already been paid. Please contact support for a refund.",
+        );
+      }
+
+      // Restore inventory.
       for (const item of order.items) {
         await Product.updateOne(
           { _id: item.product },
-          { $inc: { stock: item.quantity } },
+          {
+            $inc: {
+              stock: item.quantity,
+            },
+          },
           { session },
         );
       }
@@ -220,6 +283,7 @@ export async function cancelOrder(req, res) {
       order.cancelledAt = new Date();
 
       await order.save({ session });
+
       cancelledOrder = order;
     });
   } finally {
